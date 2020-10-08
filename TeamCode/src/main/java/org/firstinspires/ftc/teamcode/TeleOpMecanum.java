@@ -37,7 +37,7 @@ public class TeleOpMecanum extends OpMode {
         boolean left = gamepad1.dpad_left;
         double horPos = -gamepad1.left_stick_y;
         double verPos = gamepad1.left_stick_x;
-        double
+        double pos = 1;
 
         frontLeft.setPower(pos);
         frontRight.setPower(pos);
