@@ -19,6 +19,7 @@ public class Robot {
     public static Shooter shooter = new Shooter();
     public static WobbleGoal wobbleGoal = new WobbleGoal();
 
+
     protected static OpMode opMode;
 
     private static Subsystem[] subsystems = {driveTrain, conveyor, imu, intake, odometry, shooter, wobbleGoal};

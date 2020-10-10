@@ -1,17 +1,18 @@
 package org.cypher.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.cypher.Subsystem;
 
 public class DriveTrain implements Subsystem {
-    //TODO: add motors
+    //TODO: add motors bill
     @Override
     public void initialize(OpMode opMode) {
 
     }
 
-    public void setPowers(float frontLeft, float frontRight, float backLeft, float backRight) {
+        public void setPowers(float frontLeft, float frontRight, float backLeft, float backRight) {
 
     }
 
