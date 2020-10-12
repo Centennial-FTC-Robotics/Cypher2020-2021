@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.altfiles;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="TeleOpMecanum", group="TeleOp")
-public class TeleOpMecanum extends OpMode {
+@TeleOp(name="TeleOpBasic", group="TeleOp")
+public class TeleOpBasic extends OpMode {
 
     DcMotor frontLeft, backLeft, frontRight, backRight;
 
@@ -28,16 +28,14 @@ public class TeleOpMecanum extends OpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-    }
+        }
 
     @Override
     public void loop() {
 
         boolean right = gamepad1.dpad_right;
         boolean left = gamepad1.dpad_left;
-        double horPos = -gamepad1.left_stick_y;
-        double verPos = gamepad1.left_stick_x;
-        double pos = 1;
+        double pos = -gamepad1.left_stick_y;
 
         frontLeft.setPower(pos);
         frontRight.setPower(pos);
@@ -46,19 +44,15 @@ public class TeleOpMecanum extends OpMode {
 
         if (left) {
 
-            frontLeft.setPower(-1);
-            backRight.setPower(1);
-            frontRight.setPower(1);
-            backLeft.setPower(-1);
+            frontLeft.setPower(1);
+            //backRight.setPower(1);
 
         }
 
         if (right) {
 
-            frontLeft.setPower(1);
-            backRight.setPower(-1);
-            frontRight.setPower(-1);
-            backLeft.setPower(1);
+            frontRight.setPower(1);
+            //backLeft.setPower(1);
 
         }
 
