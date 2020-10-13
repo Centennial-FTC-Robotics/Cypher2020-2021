@@ -33,7 +33,6 @@ public class Odometry implements Subsystem {
 
     }
 
-
     @Override
     public void initialize(OpMode opMode) {
 
