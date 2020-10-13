@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.cypher.Subsystem;
 
 public class Odometry implements Subsystem {
-    //TODO: do this whole thing B
+    //TODO: do this whole thing
 
     DcMotor leftE, rightE, sideE; //onmiwheels need motor names as pointers
 
