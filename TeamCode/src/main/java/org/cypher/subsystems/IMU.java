@@ -1,27 +1,46 @@
 package org.cypher.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.cypher.Subsystem;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 public class IMU implements Subsystem {
-    private float angle;
+    private float angle, initAngle;
     private BNO055IMU imu;
-    //TODO: do it danylo
+    //TODO: add things idk
 
     @Override
     public void initialize(OpMode opMode) {
+        telemetry.addLine("Initializing IMU...");
+        telemetry.update();
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+
+        //mounted orientation?
+        initAngle = imu.getAngularOrientation().firstAngle;
+
+        telemetry.addLine("IMU initialized.");
+        telemetry.update();
     }
 
     public void normalize() {
-
+        angle = imu.getAngularOrientation().firstAngle - initAngle;
     }
 
     public float getAngle() {
+        normalize();
         return angle;
     }
-
-
 }
