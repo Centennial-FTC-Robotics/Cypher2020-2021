@@ -23,5 +23,4 @@ public class IMU implements Subsystem {
         return angle;
     }
 
-
 }
