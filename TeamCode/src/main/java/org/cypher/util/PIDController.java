@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PIDController {
     private float kP, kI, kD;
-    private float i; 
+    private float i;
     private float oldError;
     private boolean running = false;
     private ElapsedTime time;
