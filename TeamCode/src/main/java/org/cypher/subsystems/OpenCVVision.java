@@ -37,5 +37,5 @@ public class OpenCVVision implements Subsystem {
 
             return input;
         }
-    }
+    }   
 }
