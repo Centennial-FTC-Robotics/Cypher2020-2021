@@ -1,5 +1,6 @@
 package org.cypher;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.cypher.subsystems.Conveyor;
@@ -10,6 +11,8 @@ import org.cypher.subsystems.Odometry;
 import org.cypher.subsystems.Shooter;
 import org.cypher.subsystems.WobbleGoal;
 
+import java.util.List;
+
 public class Robot {
     public static DriveTrain driveTrain = new DriveTrain();
     public static Conveyor conveyor = new Conveyor();
@@ -18,6 +21,7 @@ public class Robot {
     public static Odometry odometry = new Odometry();
     public static Shooter shooter = new Shooter();
     public static WobbleGoal wobbleGoal = new WobbleGoal();
+    private static List<LynxModule> hubs;
 
     protected static OpMode opMode;
 
@@ -28,6 +32,13 @@ public class Robot {
         for(Subsystem subsystem : subsystems) {
             subsystem.initialize(opMode);
         }
+
+        hubs = opMode.hardwareMap.getAll(LynxModule.class);
+        for(LynxModule hub : hubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
     }
+
+
 
 }

@@ -11,6 +11,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class OpenCVVision implements Subsystem {
     OpenCvCamera camera;
+    //TODO: do it luqman
 
     private int rings = -1;
     @Override
