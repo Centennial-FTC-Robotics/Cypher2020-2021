@@ -35,6 +35,10 @@ public class IMU implements Subsystem {
         telemetry.update();
     }
 
+    public void setInitAngle(float initAngle) {
+        this.initAngle = initAngle;
+    }
+
     public void normalize() {
         angle = imu.getAngularOrientation().firstAngle - initAngle;
     }

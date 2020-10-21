@@ -17,19 +17,33 @@ public class PIDController {
 
     public void start() {
         running = true;
+        time = new ElapsedTime();
+        oldError = 0;
+        i = 0;
     }
 
     public void reset() {
-
+        running = false;
     }
 
     public void editConstants(float kP, float kI, float kD) {
-
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
     }
 
-    public void getPower(float error) {
+    public float getPower(float error) {
+        if(!running)
+            start();
 
+        float p = error;
+        i+= error * time.seconds();
+        float d = (float) ((error - oldError) / time.seconds());
+
+        oldError = error;
+        time.reset();
+
+        return kP * p + kI * i + kD * d;
     }
-
 
 }

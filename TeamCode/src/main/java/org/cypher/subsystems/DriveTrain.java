@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.cypher.Subsystem;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 public class DriveTrain implements Subsystem {
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -37,14 +35,4 @@ public class DriveTrain implements Subsystem {
         this.backRight.setPower(backRight);
     }
 
-    protected void stopEverything() {
-        telemetry.addLine("Stopping");
-        telemetry.update();
-
-        /*stop the motors
-        for (DcMotorEx : motors) {
-            motor.setPower(0);
-        } //also slides
-        */
-    }
 }
