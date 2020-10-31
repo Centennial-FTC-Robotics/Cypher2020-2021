@@ -9,7 +9,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 public class IMU implements Subsystem {
-    private float angle, initAngle;
+    private double angle, initAngle;
     private BNO055IMU imu;
     //TODO: add things idk
 
@@ -43,7 +43,7 @@ public class IMU implements Subsystem {
         angle = imu.getAngularOrientation().firstAngle - initAngle;
     }
 
-    public float getAngle() {
+    public double getAngle() {
         normalize();
         return angle;
     }

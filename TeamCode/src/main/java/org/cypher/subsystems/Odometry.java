@@ -32,6 +32,7 @@ public class Odometry implements Subsystem {
     private final static double B_RADIUS = 1;
 
     private double angle = 0;
+    private double angleCorrection = 0;
     private double deltaAngle = 0;
 
     public double deltax;
@@ -53,6 +54,10 @@ public class Odometry implements Subsystem {
         this.xPos = xPos;
         this.yPos = yPos;
         this.angle = angle;
+    }
+
+    public void setAngleCorrection(double angleCorrection) {
+        this.angleCorrection = angleCorrection;
     }
 
     public void updateEncoders() {
@@ -103,7 +108,7 @@ public class Odometry implements Subsystem {
         oldBPos = getBPos();
 
         deltaAngle = (deltaRPos - deltaLPos)/(2*LR_RADIUS*ENCODER_COUNTS_PER_INCH);
-        angle = normalizeRadians(angle + deltaAngle);
+        angle = normalizeRadians(angle + deltaAngle + angleCorrection);
         if(deltaAngle == 0) {
             deltax = deltaBPos;
             deltay = (deltax + deltay)/2;
