@@ -70,7 +70,17 @@ public class DriveTrain implements Subsystem {
 
     public void goToPos(double x, double y, double angle, double maxSpeed, double tolerance, double angleTolerance) {
         updatePos();
-
     }
 
+    public double[] findMotorPowers(double leftX, double leftY, double rightX) {
+        double max = Math.max(Math.abs(leftX), Math.max(Math.abs(leftY), Math.abs(rightX)));
+        double[] powers = new double[4];
+        //TODO: test other stuffs for this cause this is bad
+        powers[0] = (leftY + leftX + rightX) / max;
+        powers[1] = (leftY - leftX + rightX) / max;
+        powers[2] = (leftY - leftX - rightX) / max;
+        powers[3] = (leftY + leftX - rightX) / max;
+
+        return powers;
+    }
 }
