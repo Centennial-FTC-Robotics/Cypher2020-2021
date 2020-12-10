@@ -86,5 +86,4 @@ public class Vector {
         return "x component: " + this.x + "\ny component: " + this.y + "\nangle: " + this.angle() + "\nmagnitude: " + this.magnitude() + "\n";
     }
 
-    //TODO: add basic vector stuff
 }

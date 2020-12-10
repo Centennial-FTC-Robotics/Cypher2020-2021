@@ -34,10 +34,10 @@ public class DriveTrain implements Subsystem {
 
     public void updatePos() {
         if(odoLoopCount % IMU_ANGLE_SYNC_RATE == 1) {
-            double angle = Robot.imu.getAngle();
-            Robot.odometry.setAngleCorrection(angle);
+//            double angle = Robot.imu.getAngle();
+//            Robot.odometry.setAngleCorrection(angle);
         }
-        Robot.odometry.updatePos();
+//        Robot.odometry.updatePos();
         odoLoopCount++;
     }
 
@@ -72,14 +72,21 @@ public class DriveTrain implements Subsystem {
         updatePos();
     }
 
+    //0 - leftup, 1 - rightup, 2 - rightdown, 3 - leftdown
     public double[] findMotorPowers(double leftX, double leftY, double rightX) {
-        double max = Math.max(Math.abs(leftX), Math.max(Math.abs(leftY), Math.abs(rightX)));
-        double[] powers = new double[4];
-        //TODO: test other stuffs for this cause this is bad
-        powers[0] = (leftY + leftX + rightX) / max;
-        powers[1] = (leftY - leftX + rightX) / max;
-        powers[2] = (leftY - leftX - rightX) / max;
-        powers[3] = (leftY + leftX - rightX) / max;
+       double magnitude = Math.sqrt(leftX * leftX + leftY * leftY + rightX * rightX);
+       double[] powers = new double[4];
+       if(magnitude > 1) {
+           powers[0] = (-leftX + leftY - rightX) / magnitude;
+           powers[1] = (leftX + leftY + rightX) / magnitude;
+           powers[2] = (-leftX + leftY + rightX) / magnitude;
+           powers[3] = (leftX + leftY + rightX) / magnitude;
+       } else {
+           powers[0] = (-leftX + leftY - rightX);
+           powers[1] = (leftX + leftY + rightX);
+           powers[2] = (-leftX + leftY + rightX);
+           powers[3] = (leftX + leftY + rightX);
+       }
 
         return powers;
     }
