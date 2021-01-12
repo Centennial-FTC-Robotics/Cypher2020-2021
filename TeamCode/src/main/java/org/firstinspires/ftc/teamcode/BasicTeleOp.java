@@ -4,14 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.cypher.Robot;
+import org.cypher.util.Vector;
 
-@TeleOp()
-public class UseThisTeleOp extends LinearOpMode {
+@TeleOp(name="Basic TeleOp")
+public class BasicTeleOp extends LinearOpMode {
+
+    //
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.init(this);
         waitForStart();
-
         double leftX, leftY, rightX;
         double[] powers;
         while(opModeIsActive()) {
@@ -23,4 +25,6 @@ public class UseThisTeleOp extends LinearOpMode {
             Robot.driveTrain.setPowers(powers[0], powers[1], powers[3], powers[2]);
         }
     }
+
+
 }

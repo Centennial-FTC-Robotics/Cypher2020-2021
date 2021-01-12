@@ -16,6 +16,8 @@ public class DriveTrain implements Subsystem {
     private int odoLoopCount = 0;
     private static final int IMU_ANGLE_SYNC_RATE = 50;
 
+
+
     @Override
     public void initialize(OpMode opMode) {
         frontLeft = opMode.hardwareMap.dcMotor.get("frontLeft");
@@ -90,4 +92,29 @@ public class DriveTrain implements Subsystem {
 
         return powers;
     }
+
+    public void setMotorPowers(double diag1, double diag2, double rotate) {
+        double upleft, upright, downleft, downright;
+
+        upleft = diag1 + rotate;
+        downleft = diag2 + rotate;
+        upright = diag2 - rotate;
+        downright = diag1 - rotate;
+
+        double max = Math.abs(Math.max(Math.max(Math.max(upleft, upright),downleft),downright));
+        if(max > 1) {
+            upleft/= max;
+            upright/= max;
+            downleft/= max;
+            downright/= max;
+        }
+
+        frontLeft.setPower(upleft);
+        frontRight.setPower(upright);
+        backLeft.setPower(downleft);
+        backRight.setPower(downright);
+
+
+    }
+
 }
