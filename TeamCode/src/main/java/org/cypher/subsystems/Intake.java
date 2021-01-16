@@ -11,10 +11,11 @@ public class Intake implements Subsystem {
     @Override
     public void initialize(OpMode opMode) {
         intake = opMode.hardwareMap.dcMotor.get("intake");
-//        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    private void setIntakePower(double power) {
+    public void setIntakePower(double power) {
         intake.setPower(power);
     }
 }

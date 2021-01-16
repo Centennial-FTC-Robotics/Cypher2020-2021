@@ -15,10 +15,10 @@ public class IMU implements Subsystem {
 
     @Override
     public void initialize(OpMode opMode) {
-        telemetry.addLine("Initializing IMU...");
-        telemetry.update();
+        opMode.telemetry.addLine("Initializing IMU...");
+        opMode.telemetry.update();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -31,8 +31,8 @@ public class IMU implements Subsystem {
         //mounted orientation?
         initAngle = imu.getAngularOrientation().firstAngle;
 
-        telemetry.addLine("IMU initialized.");
-        telemetry.update();
+        opMode.telemetry.addLine("IMU initialized.");
+        opMode.telemetry.update();
     }
 
     public void setInitAngle(float initAngle) {

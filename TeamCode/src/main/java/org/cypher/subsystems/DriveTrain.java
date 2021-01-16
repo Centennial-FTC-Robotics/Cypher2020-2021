@@ -16,17 +16,20 @@ public class DriveTrain implements Subsystem {
     private int odoLoopCount = 0;
     private static final int IMU_ANGLE_SYNC_RATE = 50;
 
+    private OpMode opMode;
+
 
 
     @Override
     public void initialize(OpMode opMode) {
+        this.opMode = opMode;
         frontLeft = opMode.hardwareMap.dcMotor.get("frontLeft");
         frontRight = opMode.hardwareMap.dcMotor.get("frontRight");
         backLeft = opMode.hardwareMap.dcMotor.get("backLeft");
         backRight = opMode.hardwareMap.dcMotor.get("backRight");
 
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -48,6 +51,12 @@ public class DriveTrain implements Subsystem {
         this.frontRight.setPower(frontRight);
         this.backLeft.setPower(backLeft);
         this.backRight.setPower(backRight);
+
+        opMode.telemetry.addLine("" + this.frontLeft.getPower());
+        opMode.telemetry.addLine("" + this.frontRight.getPower());
+        opMode.telemetry.addLine("" + this.backRight.getPower());
+        opMode.telemetry.addLine("" + this.backLeft.getPower());
+        opMode.telemetry.update();
     }
 
     //TODO: finish these two
@@ -75,19 +84,23 @@ public class DriveTrain implements Subsystem {
     }
 
     //0 - leftup, 1 - rightup, 2 - rightdown, 3 - leftdown
+    //double frontLeft,
+    // double frontRight,
+    // double backLeft,
+    // double backRight
     public double[] findMotorPowers(double leftX, double leftY, double rightX) {
        double magnitude = Math.sqrt(leftX * leftX + leftY * leftY + rightX * rightX);
        double[] powers = new double[4];
        if(magnitude > 1) {
            powers[0] = (-leftX + leftY - rightX) / magnitude;
            powers[1] = (leftX + leftY + rightX) / magnitude;
-           powers[2] = (-leftX + leftY + rightX) / magnitude;
-           powers[3] = (leftX + leftY + rightX) / magnitude;
+           powers[2] = (leftX + leftY - rightX) / magnitude;
+           powers[3] = (-leftX + leftY + rightX) / magnitude;
        } else {
            powers[0] = (-leftX + leftY - rightX);
            powers[1] = (leftX + leftY + rightX);
-           powers[2] = (-leftX + leftY + rightX);
-           powers[3] = (leftX + leftY + rightX);
+           powers[2] = (leftX + leftY - rightX);
+           powers[3] = (-leftX + leftY + rightX);
        }
 
         return powers;

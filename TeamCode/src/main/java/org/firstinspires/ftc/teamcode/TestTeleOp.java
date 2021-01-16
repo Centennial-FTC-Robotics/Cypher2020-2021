@@ -15,7 +15,7 @@ public class TestTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot.init(this);
         waitForStart();
-        Robot.imu.setInitAngle(90);
+        Robot.imu.setInitAngle(180);
         double rotate;
         leftStick = new Vector(0, 0);
 
@@ -29,13 +29,13 @@ public class TestTeleOp extends LinearOpMode {
 
     public void findMotorPowers() {
         double leftX = gamepad1.left_stick_x * .8;
-        double lefyY = -gamepad1.left_stick_y * .9;
-        leftStick.setComponents(leftX, lefyY);
-        double scalar = Math.max(Math.abs(lefyY - leftX), Math.abs(leftX+lefyY));
+        double leftY = -gamepad1.left_stick_y * .9;
+        leftStick.setComponents(leftX, leftY);
+        double scalar = Math.max(Math.abs(leftY - leftX), Math.abs(leftX+leftY));
         double magnitude = leftStick.magnitude();
 
         leftStick.rotate(Robot.imu.getInitAngle() - Robot.imu.getAngle());
 
-        motorSpeeds = new Vector((leftX+leftX)*magnitude/scalar, (lefyY-leftX)*magnitude/scalar);
+        motorSpeeds = new Vector((leftX+leftX)*magnitude/scalar, (leftY-leftX)*magnitude/scalar);
     }
 }

@@ -11,18 +11,28 @@ import org.cypher.Subsystem;
 public class Shooter implements Subsystem {
     private DcMotor shooter;
     private Servo servo;
-    private static final double OPEN_POSITION = 0;
-    private static final double CLOSE_POSITION = 0;
+    private static final double NOT_SHOOTING = 0;
+    private static final double SHOOT_ONE =  .25;
+    private static final double SHOOT_TWO = .5;
+    private static final double SHOOT_THREE = .75;
 
-    //TODO: move servo, then shoot, then move it back
-
+    //start shooter motor at .4 speed
+    //wait like .5 of a second
+    //move servo up to SHOOT_ONE
+    //wait like .25 of a second
+    //move servo to SHOOT_TWO
+    //wait like .25 of a second
+    //move servo to SHOOT_THREE
+    //wait like .25 of a second
+    //move servo down to NOT_SHOOTING
+    //stop motor
 
     @Override
     public void initialize(OpMode opMode) {
         shooter = opMode.hardwareMap.dcMotor.get("shooter");
         servo = opMode.hardwareMap.servo.get("shooterServo");
 
-        servo.setPosition(CLOSE_POSITION);
+        servo.setPosition(NOT_SHOOTING);
     }
 
     public void setPower(double power) {
@@ -30,9 +40,18 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot() {
-        servo.setPosition(OPEN_POSITION);
+        double[] positions = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
+        setPower(.4);
         ElapsedTime time = new ElapsedTime();
-        while(time.seconds() < .5); //wait .5 secs
-        servo.setPosition(CLOSE_POSITION);
+        while(time.seconds() < .5);
+
+        for(double pos : positions) {
+            servo.setPosition(pos);
+            time.reset();
+            while(time.seconds() < .25);
+        }
+
+        setPower(0);
+        servo.setPosition(NOT_SHOOTING);
     }
 }
