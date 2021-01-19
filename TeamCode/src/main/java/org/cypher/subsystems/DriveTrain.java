@@ -18,6 +18,12 @@ public class DriveTrain implements Subsystem {
 
     private OpMode opMode;
 
+    private final double ticksPerRotation = 537.6;
+    private final double wheelDiameter = 3.937;
+    private final double ticksPerWheelRotation = ticksPerRotation; //MULTIPLY BY 2 FOR ACTUAL ROBOT hktdzffd
+    private final double distanceInWheelRotation = wheelDiameter * Math.PI;
+    private final double ticksPerInch = distanceInWheelRotation / ticksPerWheelRotation;
+
 
 
     @Override
@@ -46,7 +52,7 @@ public class DriveTrain implements Subsystem {
         odoLoopCount++;
     }
 
-    public void setPowers(double frontLeft, double frontRight, double backLeft, double backRight) {
+    public void  setPowers(double frontLeft, double frontRight, double backLeft, double backRight) {
         this.frontLeft.setPower(frontLeft);
         this.frontRight.setPower(frontRight);
         this.backLeft.setPower(backLeft);
@@ -58,6 +64,25 @@ public class DriveTrain implements Subsystem {
         opMode.telemetry.addLine("" + this.backLeft.getPower());
         opMode.telemetry.update();
     }
+
+
+    private int convertInchToEncoder(double inches) {
+        return (int) (inches / ticksPerInch);
+    }
+
+    private double convertEncoderToInch(int encoder) {
+        return ticksPerInch / encoder;
+    }
+
+    private void move(double forward, double left) {
+        int forwardEncoder = convertInchToEncoder(forward);
+        int leftEncoder = convertInchToEncoder(left);
+
+
+    }
+
+
+
 
     //TODO: finish these two
     public void setPowers(double frontLeft, double frontRight, double backLeft, double backRight, double anglePower) {

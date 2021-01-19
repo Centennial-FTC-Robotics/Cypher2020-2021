@@ -11,24 +11,40 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class OpenCVVision implements Subsystem {
     OpenCvCamera camera;
     //TODO: do it luqman
+    private OpMode opMode;
 
     private int rings = -1;
 
     @Override
     public void initialize(OpMode opMode) {
+        this.opMode = opMode;
         int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
 
         camera.openCameraDevice();
 
         camera.setPipeline(new RingDetectorPipeline());
+        
+        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+        });
     }
+    
+
 
     public int getRings() {
         return rings;
@@ -40,10 +56,10 @@ public class OpenCVVision implements Subsystem {
         final Scalar BLUE = new Scalar(0, 0, 255);
         final Scalar GREEN = new Scalar(0, 255, 0);
 
-        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181, 98);
+        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(320/2, 130);
 
-        static final int REGION_WIDTH = 35;
-        static final int REGION_HEIGHT = 25;
+        static final int REGION_WIDTH = 50;
+        static final int REGION_HEIGHT = 50;
 
         final int FOUR_RING_THRESHOLD = 150;
         final int ONE_RING_THRESHOLD = 135;
@@ -85,12 +101,20 @@ public class OpenCVVision implements Subsystem {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            rings = 4; // Record our analysis
-            if (avg1 > ONE_RING_THRESHOLD) {
+
+            rings = -1; // Record our analysis
+            if(avg1 > FOUR_RING_THRESHOLD) {
+                rings = 4;
+            } else if (avg1 > ONE_RING_THRESHOLD) {
                 rings = 1;
-            } else {
+            } else{
                 rings = 0;
             }
+
+            opMode.telemetry.addData("value",avg1 );
+            opMode.telemetry.addData("rings", rings);
+            opMode.telemetry.update();
+
 
             Imgproc.rectangle(
                     input, // Buffer to draw on

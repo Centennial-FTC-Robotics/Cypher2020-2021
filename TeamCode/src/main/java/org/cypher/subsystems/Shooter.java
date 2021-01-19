@@ -3,6 +3,7 @@ package org.cypher.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,10 +12,10 @@ import org.cypher.Subsystem;
 public class Shooter implements Subsystem {
     private DcMotor shooter;
     private Servo servo;
-    private static final double NOT_SHOOTING = 0;
-    private static final double SHOOT_ONE =  .25;
-    private static final double SHOOT_TWO = .5;
-    private static final double SHOOT_THREE = .75;
+    private static final double NOT_SHOOTING = .56;
+    private static final double SHOOT_ONE =  .7;
+    private static final double SHOOT_TWO = .8;
+    private static final double SHOOT_THREE = 85;
 
     //start shooter motor at .4 speed
     //wait like .5 of a second
@@ -30,6 +31,7 @@ public class Shooter implements Subsystem {
     @Override
     public void initialize(OpMode opMode) {
         shooter = opMode.hardwareMap.dcMotor.get("shooter");
+        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         servo = opMode.hardwareMap.servo.get("shooterServo");
 
         servo.setPosition(NOT_SHOOTING);
@@ -44,7 +46,6 @@ public class Shooter implements Subsystem {
         setPower(.4);
         ElapsedTime time = new ElapsedTime();
         while(time.seconds() < .5);
-
         for(double pos : positions) {
             servo.setPosition(pos);
             time.reset();
@@ -53,5 +54,9 @@ public class Shooter implements Subsystem {
 
         setPower(0);
         servo.setPosition(NOT_SHOOTING);
+    }
+
+    public void moveServo(double pos)  {
+        servo.setPosition(pos);
     }
 }

@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Robot;
 
@@ -22,7 +23,11 @@ public class IntakeShooterTest extends LinearOpMode {
             }
 
             if(gamepad1.x) {
-                Robot.shooter.shoot();
+                Robot.shooter.setPower(.8);
+            }
+
+            if(gamepad1.y) {
+                Robot.shooter.setPower(0);
             }
         }
     }
