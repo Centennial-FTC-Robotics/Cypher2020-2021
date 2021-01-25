@@ -1,22 +1,32 @@
 package org.cypher.subsystems;
 
+import android.sax.StartElementListener;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Robot;
 import org.cypher.Subsystem;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.auto.PID;
 
 public class DriveTrain implements Subsystem {
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor[] motors;
 
     private int odoLoopCount = 0;
     private static final int IMU_ANGLE_SYNC_RATE = 50;
 
-    private OpMode opMode;
+    private LinearOpMode opMode;
 
     private final double ticksPerRotation = 537.6;
     private final double wheelDiameter = 3.937;
@@ -28,7 +38,7 @@ public class DriveTrain implements Subsystem {
 
     @Override
     public void initialize(OpMode opMode) {
-        this.opMode = opMode;
+        this.opMode = (LinearOpMode) opMode;
         frontLeft = opMode.hardwareMap.dcMotor.get("frontLeft");
         frontRight = opMode.hardwareMap.dcMotor.get("frontRight");
         backLeft = opMode.hardwareMap.dcMotor.get("backLeft");
@@ -41,6 +51,8 @@ public class DriveTrain implements Subsystem {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+         motors = new DcMotor[]{frontLeft, frontRight, backLeft, backRight};
     }
 
     public void updatePos() {
@@ -57,13 +69,15 @@ public class DriveTrain implements Subsystem {
         this.frontRight.setPower(frontRight);
         this.backLeft.setPower(backLeft);
         this.backRight.setPower(backRight);
-
-        opMode.telemetry.addLine("" + this.frontLeft.getPower());
-        opMode.telemetry.addLine("" + this.frontRight.getPower());
-        opMode.telemetry.addLine("" + this.backRight.getPower());
-        opMode.telemetry.addLine("" + this.backLeft.getPower());
-        opMode.telemetry.update();
     }
+
+    public void setPowers(double frontLeft, double frontRight, double backLeft, double backRight, float factor) {
+        this.frontLeft.setPower(frontLeft * factor);
+        this.frontRight.setPower(frontRight * factor);
+        this.backLeft.setPower(backLeft * factor);
+        this.backRight.setPower(backRight * factor);
+    }
+
 
 
     private int convertInchToEncoder(double inches) {
@@ -74,15 +88,166 @@ public class DriveTrain implements Subsystem {
         return ticksPerInch / encoder;
     }
 
-    private void move(double forward, double left) {
+    public void move(double foward, double left) {
+        move(foward,left,1d/1000,0,0,1d/100);
+    }
+
+    public void move(double forward, double left, double P, double I, double D, double turnP) {
         int forwardEncoder = convertInchToEncoder(forward);
         int leftEncoder = convertInchToEncoder(left);
+        int tolerance = convertInchToEncoder(.8);
+
+        double minSpeed = 0.05;
+        double maxSpeed = .3;
+
+        double negI = 0;
+        double posI = 0;
+
+        double negSpeed,  posSpeed;
+        int negPos, posPos;
+        int negError = Integer.MAX_VALUE, posError = Integer.MAX_VALUE;
+        int negTarget = forwardEncoder - leftEncoder;
+        int posTarget = forwardEncoder + leftEncoder;
+        int oldNegError = negTarget, oldPosError = posTarget;
+
+        double angleTolerance = .5;
+        double angleMax = .8;
+        double anglePower;
+        double angleDiff = Integer.MAX_VALUE;
+        double startAngle;
+        double currentAngle;
+
+        resetEncoders();
+        Robot.setCacheMode(LynxModule.BulkCachingMode.MANUAL);
+        ElapsedTime time = new ElapsedTime();
+        startAngle = Robot.imu.getAngle();
+        while(opMode.opModeIsActive() && (Math.abs(negError) > tolerance || Math.abs(posError) > tolerance || Math.abs(angleDiff) > angleTolerance)) {
+            Robot.clearCache();
+            negPos =  (frontLeft.getCurrentPosition() + backRight.getCurrentPosition())  / 2;
+            posPos =  (frontRight.getCurrentPosition() + backLeft.getCurrentPosition()) /2;
+
+            negError = negTarget - negPos;
+            posError = posTarget - posPos;
+
+            double currentTime = time.seconds();
+            time.reset();
+
+            negI+= negError * currentTime;
+            posI+= posError * currentTime;
+
+//            negSpeed = clip((P * negError) + (D * ((negError  - oldNegError)/currentTime)) + (I * negI), minSpeed, maxSpeed);
+//            posSpeed = clip((P * posError) + (D * ((posError - oldPosError)/currentTime)) + (I * posI), minSpeed, maxSpeed);
+            negSpeed = P * negError;
+            posSpeed = P * posError;
+            negSpeed = clip(negSpeed, maxSpeed, minSpeed);
+            posSpeed = clip(posSpeed, maxSpeed, minSpeed);
+
+            oldNegError = negError;
+            oldPosError = posError;
+            currentAngle = Robot.imu.getAngle();
+
+            angleDiff = getAngleDist(startAngle, currentAngle);
+            if(Math.abs(angleDiff) > angleTolerance) {
+                anglePower = -turnP * angleDiff * getAngleDir(startAngle, currentAngle);
+                anglePower = clip(anglePower, angleMax, .02);
+            } else {
+                anglePower = 0;
+            }
+
+            opMode.telemetry.addData("neg target", negTarget);
+            opMode.telemetry.addData("pos target", posTarget);
+            opMode.telemetry.addData("neg pos", negPos);
+            opMode.telemetry.addData("pos pos", posPos);
+            opMode.telemetry.addData("neg error", negError);
+            opMode.telemetry.addData("pos error", posError);
+            opMode.telemetry.addData("neg speed", negSpeed);
+            opMode.telemetry.addData("pos speed", posSpeed);
+            opMode.telemetry.addData("angle diff", angleDiff);
+            opMode.telemetry.addData("angle dir", getAngleDir(startAngle, currentAngle));
+            opMode.telemetry.update();
+
+            setMotorPowers(negSpeed, posSpeed, anglePower);
 
 
+        }while(opMode.opModeIsActive() && (Math.abs(negError) > tolerance || Math.abs(posError) > tolerance));
+        setMotorPowers(0,0,0);
+    }
+
+    public void turnRelative(double targetAngle) {
+        turnAbsolute(AngleUnit.normalizeDegrees(targetAngle + Robot.imu.getAngle()));
+    }
+
+    public void turnAbsolute(double targetAngle) {
+        double currentAngle;
+        int direction;
+        double turnRate;
+        double minSpeed = 0.1;
+        double maxSpeed = 0.5;
+        double tolerance = .4;
+        double error = Double.MAX_VALUE;
+        double P = 1d / 150;
+
+        while(opMode.opModeIsActive() && (Math.abs(error) > tolerance)) {
+            currentAngle = Robot.imu.getAngle();
+            error = getAngleDist(currentAngle, targetAngle);
+            direction = getAngleDir(currentAngle, targetAngle);
+            turnRate = clip(P * error, maxSpeed, minSpeed);
+            opMode.telemetry.addData("error", error);
+            opMode.telemetry.addData("turnRate", turnRate);
+            opMode.telemetry.addData("current", currentAngle);
+            opMode.telemetry.addData("dir", direction);
+            opMode.telemetry.update();
+
+            setMotorPowers(0,0,turnRate * direction);
+        }
+        setMotorPowers(0,0,0);
+    }
+
+    private double getAngleDist(double targetAngle, double currentAngle) {
+        double angleDifference = currentAngle - targetAngle;
+
+        if (Math.abs(angleDifference) > 180) {
+            angleDifference = 360 - Math.abs(angleDifference);
+        } else {
+            angleDifference = Math.abs(angleDifference);
+        }
+
+        return angleDifference;
     }
 
 
+    private int getAngleDir(double targetAngle, double currentAngle) {
+        double angleDifference = targetAngle - currentAngle;
+        int angleDir = (int) (angleDifference / Math.abs(angleDifference));
 
+        if (Math.abs(angleDifference) > 180) {
+            angleDir *= -1;
+        }
+
+        return angleDir;
+    }
+
+    public static double clip(double val, double max, double min) {
+        int sign;
+        if (val < 0)
+            sign = -1;
+        else
+            sign = 1;
+        if (Math.abs(val) < min)
+            return min * sign;
+        else if (Math.abs(val) > max)
+            return max * sign;
+        else
+            return val;
+
+    }
+
+    public void resetEncoders() {
+        for(DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
 
     //TODO: finish these two
     public void setPowers(double frontLeft, double frontRight, double backLeft, double backRight, double anglePower) {
@@ -117,15 +282,15 @@ public class DriveTrain implements Subsystem {
        double magnitude = Math.sqrt(leftX * leftX + leftY * leftY + rightX * rightX);
        double[] powers = new double[4];
        if(magnitude > 1) {
-           powers[0] = (-leftX + leftY - rightX) / magnitude;
-           powers[1] = (leftX + leftY + rightX) / magnitude;
-           powers[2] = (leftX + leftY - rightX) / magnitude;
-           powers[3] = (-leftX + leftY + rightX) / magnitude;
+           powers[0] = (leftX + leftY - rightX) / magnitude;
+           powers[1] = (-leftX + leftY + rightX) / magnitude;
+           powers[2] = (-leftX + leftY - rightX) / magnitude;
+           powers[3] = (leftX + leftY + rightX) / magnitude;
        } else {
-           powers[0] = (-leftX + leftY - rightX);
-           powers[1] = (leftX + leftY + rightX);
-           powers[2] = (leftX + leftY - rightX);
-           powers[3] = (-leftX + leftY + rightX);
+           powers[0] = (leftX + leftY - rightX);
+           powers[1] = (-leftX + leftY + rightX);
+           powers[2] = (-leftX + leftY - rightX);
+           powers[3] = (leftX + leftY + rightX);
        }
 
         return powers;

@@ -13,14 +13,14 @@ public class ServoTest extends LinearOpMode {
         Robot.init(this);
         waitForStart();
         ElapsedTime time = new ElapsedTime();
-        double pos = 0;
+        double pos = .1;
         while (opModeIsActive()) {
-            if(time.milliseconds() > 100) {
+            if(time.milliseconds() > 200) {
                 if(gamepad1.dpad_up && pos < 1) {
-                    pos+=.05;
+                    pos+=.02;
                     time.reset();
                 } else if(gamepad1.dpad_down && pos > 0) {
-                    pos-=.05;
+                    pos-=.02;
                     time.reset();
                 }
             }

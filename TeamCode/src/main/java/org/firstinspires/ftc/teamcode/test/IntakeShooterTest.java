@@ -23,7 +23,7 @@ public class IntakeShooterTest extends LinearOpMode {
             }
 
             if(gamepad1.x) {
-                Robot.shooter.setPower(.8);
+                Robot.shooter.setPower(1) ;
             }
 
             if(gamepad1.y) {

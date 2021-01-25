@@ -21,6 +21,8 @@ public class OpenCVVision implements Subsystem {
     private OpMode opMode;
 
     private int rings = -1;
+    private int finalRingCount;
+    boolean isFinal = false;
 
     @Override
     public void initialize(OpMode opMode) {
@@ -43,11 +45,21 @@ public class OpenCVVision implements Subsystem {
             }
         });
     }
+
+    public void stop() {
+        camera.stopStreaming();
+    }
     
 
 
     public int getRings() {
-        return rings;
+        if(!isFinal)
+            return rings;
+        return finalRingCount;
+    }
+    public void saveRingCount() {
+        finalRingCount = rings;
+        isFinal = true;
     }
 
     //TODO: currently a copy of wizards, make own version later
@@ -56,13 +68,13 @@ public class OpenCVVision implements Subsystem {
         final Scalar BLUE = new Scalar(0, 0, 255);
         final Scalar GREEN = new Scalar(0, 255, 0);
 
-        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(320/2, 130);
+        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(110,   190);
 
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 50;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int FOUR_RING_THRESHOLD = 138 ;
+        final int ONE_RING_THRESHOLD = 133;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -121,7 +133,7 @@ public class OpenCVVision implements Subsystem {
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    2); // Negative thickness means solid fill
 
             return input;
         }

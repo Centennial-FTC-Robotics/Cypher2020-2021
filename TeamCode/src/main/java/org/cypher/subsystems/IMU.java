@@ -2,6 +2,7 @@ package org.cypher.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.cypher.Subsystem;
 
@@ -9,14 +10,13 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 public class IMU implements Subsystem {
-    private double angle, initAngle;
+    private double angle, initAngle = 0;
     private BNO055IMU imu;
     //TODO: add things idk
 
     @Override
     public void initialize(OpMode opMode) {
-        opMode.telemetry.addLine("Initializing IMU...");
-        opMode.telemetry.update();
+        opMode.telemetry.speak("inting imu");
 
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -27,12 +27,12 @@ public class IMU implements Subsystem {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
-
+        LinearOpMode linOpMode = (LinearOpMode) opMode;
+        while(!linOpMode.isStopRequested() && !imu.isGyroCalibrated());
         //mounted orientation?
         initAngle = imu.getAngularOrientation().firstAngle;
 
-        opMode.telemetry.addLine("IMU initialized.");
-        opMode.telemetry.update();
+        opMode.telemetry.speak("imu inited");
     }
 
     public void setInitAngle(float initAngle) {
