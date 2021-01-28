@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.cypher.Robot;
+import org.cypher.Kryptos;
 
 @Autonomous
 public class Turn extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.init(this);
+        Kryptos.init(this);
         waitForStart();
-        Robot.driveTrain.turnRelative(90);
+        Kryptos.driveTrain.turnRelative(90);
     }
 }

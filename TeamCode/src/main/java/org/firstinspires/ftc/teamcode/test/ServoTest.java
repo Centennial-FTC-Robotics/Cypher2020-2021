@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.Robot;
+import org.cypher.Kryptos;
 
 @TeleOp
 public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.init(this);
+        Kryptos.init(this);
         waitForStart();
         ElapsedTime time = new ElapsedTime();
         double pos = .1;
@@ -24,7 +24,7 @@ public class ServoTest extends LinearOpMode {
                     time.reset();
                 }
             }
-            Robot.shooter.moveServo(pos);
+            Kryptos.shooter.moveServo(pos);
             telemetry.addData("current pos", pos);
             telemetry.update();
         }

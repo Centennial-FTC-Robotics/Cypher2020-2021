@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.cypher.Robot;
+import org.cypher.Kryptos;
 
 @TeleOp
 public class VisionTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.initWithVision(this);
+        Kryptos.initWithVision(this);
         waitForStart();
 
         while (opModeIsActive()) {

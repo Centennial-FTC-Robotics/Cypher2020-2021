@@ -15,6 +15,10 @@ public class PIDController {
         this.kD = kD;
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     public void start() {
         running = true;
         time = new ElapsedTime();
@@ -30,6 +34,10 @@ public class PIDController {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+    }
+
+    public float getPower (float target, float actual) {
+        return getPower(target - actual);
     }
 
     public float getPower(float error) {

@@ -6,36 +6,36 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.cypher.subsystems.DriveTrain;
 import org.cypher.subsystems.IMU;
 import org.cypher.subsystems.Intake;
+import org.cypher.subsystems.Odometry;
 import org.cypher.subsystems.OpenCVVision;
 import org.cypher.subsystems.Shooter;
 import org.cypher.subsystems.WobbleGoalGrabber;
 
 import java.util.List;
 
-public class Robot {
+public class Kryptos {
     public static DriveTrain driveTrain = new DriveTrain();
     public static IMU imu  = new IMU();
     public static Intake intake = new Intake();
-//    public static Odometry odometry = new Odometry();
+    public static Odometry odometry = new Odometry();
     public static Shooter shooter = new Shooter();
     public static WobbleGoalGrabber wobbleGoalGrabber = new WobbleGoalGrabber();
-//    public static WobbleGoalMover wobbleGoalMover = new WobbleGoalMover();
     public static OpenCVVision openCV = new OpenCVVision();
     private static List<LynxModule> hubs;
 
 
     protected static OpMode opMode;
 
-    private static Subsystem[] subsystems = { intake, imu, shooter, driveTrain,wobbleGoalGrabber/*, conveyor, odometry,*/};
+    private static Subsystem[] subsystems = { intake, imu, shooter, driveTrain,wobbleGoalGrabber, odometry,};
 
     public static void initWithVision(OpMode opMode) {
         openCV.initialize(opMode);
         init(opMode);
-        Robot.wobbleGoalGrabber.grab();
+        Kryptos.wobbleGoalGrabber.grab();
     }
 
     public static void init(OpMode opMode) {
-        Robot.opMode = opMode;
+        Kryptos.opMode = opMode;
         for(Subsystem subsystem : subsystems) {
                 subsystem.initialize(opMode);
         }

@@ -4,20 +4,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.Robot;
+import org.cypher.Kryptos;
+import org.cypher.util.PIDController;
 
 @Autonomous
 public class PID extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.init(this);
+        Kryptos.init(this);
         waitForStart();
 
-        double val = 1000;
-        double P = 1/val;
+        float val = 1000;
+        float P = 1/val;
+
+        PIDController controller = new PIDController(P,0,0);
         ElapsedTime time = new ElapsedTime();
         int dir = -1;
         while (opModeIsActive()) {
+            controller.editConstants(P,0,0);
             telemetry.addData("val", val);
             telemetry.addData("p", P);
             telemetry.update();
@@ -31,9 +35,9 @@ public class PID extends LinearOpMode {
                         dir = 1;
                     else
                         dir = -1;
-                    Robot.driveTrain.move(22.75 * 3* dir, 0, P, 0, 0,1d/200);
+                    while(Kryptos.driveTrain.goToPos(0,22.75 * 3,0,.8,1,1) && opModeIsActive());
                 }
-                P = 1d/val;
+                P = 1f/val;
                 time.reset();
             }
 

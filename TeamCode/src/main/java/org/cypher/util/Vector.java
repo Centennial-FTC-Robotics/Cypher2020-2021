@@ -9,6 +9,11 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector(Vector vector) {
+        x = vector.getX();
+        y = vector.getY();
+    }
+
     public double angle() {
         double angle = Math.toDegrees(Math.atan(this.y/this.x));
         if (this.x >= 0 && this.y < 0) {

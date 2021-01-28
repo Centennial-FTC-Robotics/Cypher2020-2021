@@ -13,10 +13,10 @@ public class  Shooter implements Subsystem {
     private DcMotor shooter;
     private Servo storage;
     private Servo aligner;
-    public static final double NOT_SHOOTING = .3;
-    public static final double SHOOT_ONE =  .49;
-    public static final double SHOOT_TWO = .58;
-    public static final double SHOOT_THREE = .72;
+    public static final double NOT_SHOOTING = .6;
+    public static final double SHOOT_ONE =  .46;
+    public static final double SHOOT_TWO = .38;
+    public static final double SHOOT_THREE = .27;
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
     private static final double PUSH_POSITION =.7;
@@ -45,6 +45,7 @@ public class  Shooter implements Subsystem {
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         storage = opMode.hardwareMap.servo.get("shooterServo");
+        storage.setDirection(Servo.Direction.REVERSE);
         aligner = opMode.hardwareMap.servo.get("aligner");
 
         storage.setPosition(NOT_SHOOTING);

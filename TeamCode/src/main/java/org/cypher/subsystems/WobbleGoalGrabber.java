@@ -8,15 +8,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.cypher.Subsystem;
 
 public class WobbleGoalGrabber implements Subsystem {
-    private static final double OPEN_POSITION = .35;
-    private static final double CLOSE_POSITION = .69; //nice
+    private static final double OPEN_POSITION = .14;
+    private static final double CLOSE_POSITION = .48; //nice
     //TODO: do these ^^
     private Servo grab;
     private CRServo backHinge;
     private CRServo frontHinge;
     @Override
     public void initialize(OpMode opMode) {
-        grab = opMode.hardwareMap.servo.get("grabber");
+        grab    = opMode.hardwareMap.servo.get("grabber");
         backHinge = opMode.hardwareMap.crservo.get("back");
         frontHinge = opMode.hardwareMap.crservo.get("front");
         frontHinge.setDirection(DcMotorSimple.Direction.REVERSE);

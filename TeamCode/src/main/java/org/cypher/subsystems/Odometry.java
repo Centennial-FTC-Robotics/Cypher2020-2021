@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.cypher.Subsystem;
+import org.cypher.util.Vector;
 
 public class Odometry implements Subsystem {
     private DcMotorEx leftEncoder;
@@ -27,37 +28,40 @@ public class Odometry implements Subsystem {
     private int deltaRPos;
     private int deltaBPos;
 
-    private final static double ENCODER_COUNTS_PER_INCH = 1;
-    private final static double LR_RADIUS = 1;
-    private final static double B_RADIUS = 1;
+    public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0);
+    private final static double LR_RADIUS = -17.536;//165.5;
+    private final static double B_RADIUS = LR_RADIUS;//165.5;
 
     private double angle = 0;
     private double angleCorrection = 0;
     private double deltaAngle = 0;
+    private double startAngle = 0;
+    private double oldAngle = 0;
 
-    public double deltax;
-    public double deltay;
+    public double deltax = 0;
+    public double deltay = 0;
 
-    public double xPos;
-    public double yPos;
+    public double xPos = 0;
+    public double yPos = 0;
 
     @Override
     public void initialize(OpMode opMode) {
         leftEncoder = opMode.hardwareMap.get(DcMotorEx.class, "leftOdo");
-        rightEncoder = opMode.hardwareMap.get(DcMotorEx.class, "rightOdo");
-        backEncoder = opMode.hardwareMap.get(DcMotorEx.class, "backOdo");
+        rightEncoder = opMode.hardwareMap.get(DcMotorEx.class, "backRight");
+        backEncoder = opMode.hardwareMap.get(DcMotorEx.class, "intake");
 
         resetEncoders();
+
     }
 
     public void setStartPos(double xPos, double yPos, double angle) {
         this.xPos = xPos;
         this.yPos = yPos;
-        this.angle = angle;
+        this.angle = Math.toRadians(angle);
     }
 
     public void setAngleCorrection(double angleCorrection) {
-        this.angleCorrection = angleCorrection;
+        this.angleCorrection = normalizeRadians(angleCorrection-angle+this.angleCorrection);
     }
 
     public void updateEncoders() {
@@ -67,7 +71,7 @@ public class Odometry implements Subsystem {
     }
 
     public int getLPos() {
-        return lPos * L_DIR;
+        return (int) (lPos * L_DIR);
     }
 
     public int getRPos() {
@@ -75,7 +79,7 @@ public class Odometry implements Subsystem {
     }
 
     public int getBPos() {
-        return bPos * B_DIR;
+        return (int) (bPos * B_DIR);
     }
 
     public void resetEncoders() {
@@ -83,9 +87,26 @@ public class Odometry implements Subsystem {
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        startAngle = 0;
+        angle = 0;
+        angleCorrection = 0;
+        oldAngle = 0;
+        xPos = 0;
+        oldBPos = 0;
+        oldLPos = 0;
+        oldRPos = 0;
+        deltay = 0;
+        deltax = 0;
+        yPos = 0;
+        deltaAngle = 0;
+        deltaLPos = 0;
+        deltaRPos = 0;
+        deltaBPos = 0;
+
     }
 
     public double[] convertFieldCentric(double xPos, double yPos) {
@@ -93,7 +114,7 @@ public class Odometry implements Subsystem {
         double newX = xPos * Math.cos(angle - Math.PI / 2) - yPos * Math.sin(angle - Math.PI / 2);
         double newY = yPos * Math.cos(angle - Math.PI / 2) + xPos * Math.sin(angle - Math.PI / 2);
 
-        return new double[] {newX, newY};
+        return new double[]{newX, newY};
     }
 
     public void updatePos() {
@@ -107,35 +128,59 @@ public class Odometry implements Subsystem {
         oldRPos = getRPos();
         oldBPos = getBPos();
 
-        deltaAngle = (deltaRPos - deltaLPos)/(2*LR_RADIUS*ENCODER_COUNTS_PER_INCH);
-        angle = normalizeRadians(angle + deltaAngle + angleCorrection);
-        if(deltaAngle == 0) {
-            deltax = deltaBPos;
-            deltay = (deltax + deltay)/2;
-        } else {
-            double turnRad = LR_RADIUS*ENCODER_COUNTS_PER_INCH*(deltaLPos + deltaRPos)/(deltaRPos - deltaLPos);
-            double strafeRad = deltaBPos/deltaAngle - B_RADIUS * ENCODER_COUNTS_PER_INCH;
+        deltaAngle = (deltaRPos - deltaLPos)/(2.0*LR_RADIUS*ENCODER_COUNTS_PER_INCH); //it's in radians
+        angle = /*normalizeRadians(heading + deltaHeading);*/ normalizeRadians((getRPos()-getLPos())/(2.0*LR_RADIUS*ENCODER_COUNTS_PER_INCH) + startAngle+angleCorrection);
 
-            deltax = turnRad*(Math.cos(deltaAngle) - 1) + strafeRad * Math.sin(deltaAngle);
-            deltay = turnRad*Math.sin(deltaAngle) + strafeRad*(1 - Math.cos(deltaAngle));
+//
+//        deltax = deltaBPos/ENCODER_COUNTS_PER_INCH;
+//        deltay = deltaLPos/ENCODER_COUNTS_PER_INCH;
+
+        if (Math.abs(deltaAngle) == 0) {
+            deltax = deltaBPos;
+            deltay = (deltaLPos + deltaRPos) / 2d;
+        } else {
+            double turnRadius = LR_RADIUS * ENCODER_COUNTS_PER_INCH * (deltaLPos + deltaRPos) / (deltaRPos - deltaLPos);
+            double strafeRadius = deltaBPos / deltaAngle - B_RADIUS * ENCODER_COUNTS_PER_INCH;
+
+
+            deltax = turnRadius * (Math.cos(deltaAngle) - 1) + strafeRadius * Math.sin(deltaAngle);
+            deltay = turnRadius * Math.sin(deltaAngle) + strafeRadius * (1 - Math.cos(deltaAngle));
         }
 
-        double[] fieldCentricValues = convertFieldCentric(deltax, deltay);
 
-        xPos += fieldCentricValues[0];
-        yPos += fieldCentricValues[1];
+        double[] fieldCentricValues = convertFieldCentric(encoderToInch(deltax), encoderToInch(deltay));
+
+        xPos += fieldCentricValues[1];
+        yPos += fieldCentricValues[0];
     }
 
-    private double normalizeRadians(double angle){
-        while(angle >= 2*Math.PI) {
-            angle -= 2*Math.PI;
+
+    public float encoderToInch(double encoder) {
+        return (float)(encoder/ENCODER_COUNTS_PER_INCH);
+    }
+
+    private double normalizeRadians(double angle) {
+        while (angle >= 2 * Math.PI) {
+            angle -= 2 * Math.PI;
         }
 
-        while(angle < 0.0) {
-            angle += 2*Math.PI;
+        while (angle < 0.0) {
+            angle += 2 * Math.PI;
         }
 
         return angle;
+    }
+
+    public double getHeading() {
+        return angle;
+    }
+
+    public double getDeltaAngle() {
+        return deltaAngle;
+    }
+
+    public Vector getPos() {
+        return new Vector(xPos, yPos );
     }
 
 }

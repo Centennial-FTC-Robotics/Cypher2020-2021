@@ -4,18 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.Robot;
-import org.cypher.subsystems.WobbleGoalGrabber;
+import org.cypher.Kryptos;
+import org.cypher.subsystems.Odometry;
 import org.cypher.util.Vector;
-import org.firstinspires.ftc.robotcore.internal.webserver.WebObserver;
 
 @TeleOp(name="Basic TeleOp")
 public class BasicTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.init(this);
-        Robot.imu.setInitAngle(-90);
+        Kryptos.init(this);
+        Kryptos.imu.setInitAngle(0);
         waitForStart();
         double leftX, leftY, rightX;
         double[] powers;
@@ -34,8 +33,24 @@ public class BasicTeleOp extends LinearOpMode {
         ElapsedTime endGameTime = new ElapsedTime();
 
         boolean endGame = false;
-
+        Kryptos.odometry.setStartPos(0,0,0);
+        Kryptos.imu.setInitAngle(0);
         while(opModeIsActive()) {
+            Kryptos.driveTrain.updatePos();
+            telemetry.addData("odo l encoder", Kryptos.odometry.getLPos()/ Odometry.ENCODER_COUNTS_PER_INCH);
+            telemetry.addData("odo r encoder", Kryptos.odometry.getRPos()/ Odometry.ENCODER_COUNTS_PER_INCH);
+            telemetry.addData("odo b encoder", Kryptos.odometry.getBPos()/ Odometry.ENCODER_COUNTS_PER_INCH);
+            telemetry.addData("rot", Math.toDegrees(Kryptos.odometry.getHeading()));
+            telemetry.addData("imu rot", Kryptos.imu.getAngle());
+            telemetry.addData("imu sync", Kryptos.driveTrain.odoLoopCount);
+            telemetry.addData("delta angle", Math.toDegrees(Kryptos.odometry.getDeltaAngle()));
+
+
+            Vector pos = Kryptos.odometry.getPos();
+            telemetry.addData("x",pos.getX() );
+            telemetry.addData("y",pos.getY());
+            telemetry.update();
+
             if(time.milliseconds() > 250) {
 
                 if(gamepad1.a && !gamepad1.start) {
@@ -44,8 +59,7 @@ public class BasicTeleOp extends LinearOpMode {
                         intakePower = .7;
                     else
                         intakePower = 0;
-                    telemetry.addData("intake on", intakeOn);
-                    telemetry.update();
+
                     time.reset();
                 }
 
@@ -59,15 +73,15 @@ public class BasicTeleOp extends LinearOpMode {
                 }
 
                 if(gamepad2.a && !gamepad2.start) {
-                    Robot.shooter.shoot(true);
+                    Kryptos.shooter.shoot(true);
                     time.reset();
                 }
 
                 if(gamepad2.x) {
                     if(isGrabbed)
-                        Robot.wobbleGoalGrabber.release();
+                        Kryptos.wobbleGoalGrabber.release();
                     else
-                        Robot.wobbleGoalGrabber.grab();
+                        Kryptos.wobbleGoalGrabber.grab();
 
                     isGrabbed = !isGrabbed;
                     time.reset();
@@ -93,8 +107,8 @@ public class BasicTeleOp extends LinearOpMode {
             }
 
 
-            Robot.wobbleGoalGrabber.moveHinge(wobbleGoalPower);
-            Robot.intake.setIntakePower(intakePower * intakeDir);
+            Kryptos.wobbleGoalGrabber.moveHinge(wobbleGoalPower);
+            Kryptos.intake.setIntakePower(intakePower * intakeDir);
 
             if(!(gamepad1.left_trigger > 0)) {
                 factor = 1;
@@ -103,12 +117,9 @@ public class BasicTeleOp extends LinearOpMode {
             leftY = -gamepad1.left_stick_y * .9;
             rightX = -gamepad1.right_stick_x * .8;
 
-            powers = Robot.driveTrain.findMotorPowers(leftX, leftY, rightX);
-            Robot.driveTrain.setPowers(powers[0], powers[1], powers[2], powers[3], factor);
-            telemetry.addData("wobble goal power", wobbleGoalPower);
-            telemetry.addData("angle", Robot.imu.getAngle());
-            telemetry.addData("game time", endGameTime.seconds());
-            telemetry.update();
+            powers = Kryptos.driveTrain.findMotorPowers(leftX, leftY, rightX);
+            Kryptos.driveTrain.setPowers(powers[0], powers[1], powers[2], powers[3], factor);
+
 
             if(endGameTime.seconds() >= 90 && !endGame) {
                 telemetry.speak("were in the endgame now");
