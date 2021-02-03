@@ -31,7 +31,7 @@ public class BlueSideAuto extends LinearOpMode {
             while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3, 0),0));
         }
         else if(ringCount == 1) {
-            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0,0),0));
+            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0,0),0));
             while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 4,0),0));
             while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 4,22),0));
 
@@ -92,5 +92,6 @@ public class BlueSideAuto extends LinearOpMode {
 
         while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3.5,22.75),90));
 
+        //TODO: write pos data to file
     }
 }

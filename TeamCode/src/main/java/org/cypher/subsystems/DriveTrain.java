@@ -36,7 +36,6 @@ public class DriveTrain implements Subsystem {
     private final double distanceInWheelRotation = wheelDiameter * Math.PI;
     private final double ticksPerInch = distanceInWheelRotation / ticksPerWheelRotation;
 
-    private final PIDController moveController = new PIDController(.05f,0.05f,0.3f);
     private final PIDController xController = new PIDController(.12f,.01f,0f);
     private final PIDController yController = new PIDController(.12f,.007f,0.01f);
     private final PIDController angleController = new PIDController(.1f,0.083f,0.09f);
@@ -243,7 +242,6 @@ public class DriveTrain implements Subsystem {
         return angleDir;
     }
 
-
     public static double clip(double val, double max, double min) {
         int sign;
         if (val < 0)
@@ -256,7 +254,6 @@ public class DriveTrain implements Subsystem {
             return max * sign;
         else
             return val;
-
     }
 
     public void resetEncoders() {
@@ -351,8 +348,8 @@ public class DriveTrain implements Subsystem {
         opMode.telemetry.addData("robot centric error", error);
 
 
-        robotCentric = new Vector((double) -xController.getPower((float) error.getComponent(0).doubleValue()),
-                (double) yController.getPower((float) error.getComponent(1).doubleValue()));
+        robotCentric = new Vector(-xController.getPower((float) error.getComponent(0).doubleValue()),
+                yController.getPower((float) error.getComponent(1).doubleValue()));
 
         opMode.telemetry.addData("robot centric powers", robotCentric);
 

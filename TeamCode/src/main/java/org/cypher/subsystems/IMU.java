@@ -43,8 +43,9 @@ public class IMU implements Subsystem {
         return initAngle;
     }
 
+
     public void normalize() {
-        angle = imu.getAngularOrientation().firstAngle - initAngle;
+        angle = imu.getAngularOrientation().firstAngle + initAngle;
     }
 
     public double getAngle() {
