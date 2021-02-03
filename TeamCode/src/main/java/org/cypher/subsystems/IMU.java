@@ -16,7 +16,7 @@ public class IMU implements Subsystem {
 
     @Override
     public void initialize(OpMode opMode) {
-        opMode.telemetry.speak("inting imu");
+        opMode.telemetry.speak("initing imu");
 
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

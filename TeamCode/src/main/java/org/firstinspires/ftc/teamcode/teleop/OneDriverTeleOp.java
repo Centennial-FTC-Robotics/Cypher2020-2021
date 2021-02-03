@@ -5,11 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Kryptos;
-import org.cypher.subsystems.Odometry;
 import org.cypher.util.Vector;
 
-@TeleOp(name="Basic TeleOp")
-public class BasicTeleOp extends LinearOpMode {
+@TeleOp(name="One Driver TeleOp")
+public class OneDriverTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,12 +65,12 @@ public class BasicTeleOp extends LinearOpMode {
                     factor = .2f;
                 }
 
-                if(gamepad2.a && !gamepad2.start) {
+                if(gamepad1.y) {
                     Kryptos.shooter.shoot(true);
                     time.reset();
                 }
 
-                if(gamepad2.x) {
+                if(gamepad1.x) {
                     if(isGrabbed)
                         Kryptos.wobbleGoalGrabber.release();
                     else
@@ -81,12 +80,10 @@ public class BasicTeleOp extends LinearOpMode {
                     time.reset();
                 }
 
-                if(gamepad2.b && !gamepad2.start) {
+                    if(gamepad1.b && !gamepad1.start ) {
                     Kryptos.wobbleGoalGrabber.flipHinge();
                 }
-
             }
-
                 Kryptos.intake.setIntakePower(intakePower * intakeDir);
 
             if(!(gamepad1.left_trigger > 0)) {

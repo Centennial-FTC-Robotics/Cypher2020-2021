@@ -30,7 +30,7 @@ public class OdoCal extends LinearOpMode {
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "frontRight", rbName = "backRight", lfName = "frontLeft", lbName = "backLeft";
-    String verticalLeftEncoderName = "leftOdo", verticalRightEncoderName = "backRight", horizontalEncoderName = "intake";
+    String verticalLeftEncoderName = "backRight", verticalRightEncoderName = "frontRight", horizontalEncoderName = "intake";
 
     final double PIVOT_SPEED = 0.5;
 
@@ -111,7 +111,7 @@ public class OdoCal extends LinearOpMode {
         double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH);
         //wheelBaseSeparation = (2.0*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH)
 
-        horizontalTickOffset = (horizontal.getCurrentPosition())/Math.toRadians(getZAngle());
+        horizontalTickOffset = (-horizontal.getCurrentPosition())/Math.toRadians(getZAngle());
 
         //Write the constants to text files
         ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));
@@ -127,7 +127,7 @@ public class OdoCal extends LinearOpMode {
             telemetry.addData("IMU Angle", getZAngle());
             telemetry.addData("Vertical Left Position",verticalLeft.getCurrentPosition());
             telemetry.addData("Vertical Right Position", verticalRight.getCurrentPosition());
-            telemetry.addData("Horizontal Position", horizontal.getCurrentPosition());
+            telemetry.addData("Horizontal Position", -horizontal.getCurrentPosition());
             telemetry.addData("Vertical Encoder Offset", verticalEncoderTickOffsetPerDegree);
 
             //Update values

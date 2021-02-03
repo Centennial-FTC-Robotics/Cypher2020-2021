@@ -1,5 +1,7 @@
 package org.cypher.subsystems;
 
+import android.media.Image;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.cypher.Subsystem;
@@ -62,7 +64,7 @@ public class OpenCVVision implements Subsystem {
         isFinal = true;
     }
 
-    //TODO: currently a copy of wizards, make own version later
+        //TODO: currently a copy of wizards, make own version later
     class RingDetectorPipeline extends OpenCvPipeline {
 
         final Scalar BLUE = new Scalar(0, 0, 255);
@@ -73,8 +75,8 @@ public class OpenCVVision implements Subsystem {
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 50;
 
-        final int FOUR_RING_THRESHOLD = 138 ;
-        final int ONE_RING_THRESHOLD = 133;
+        final int FOUR_RING_THRESHOLD = 140 ;
+        final int ONE_RING_THRESHOLD = 136;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -106,6 +108,8 @@ public class OpenCVVision implements Subsystem {
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
 
+
+
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
@@ -134,6 +138,10 @@ public class OpenCVVision implements Subsystem {
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
                     2); // Negative thickness means solid fill
+//            Mat testMat = new Mat();
+//            Imgproc.cvtColor(input,testMat,Imgproc.COLOR_RGB2YCrCb);
+//
+//            Core.extractChannel(testMat,input,1);
 
             return input;
         }

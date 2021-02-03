@@ -14,9 +14,9 @@ public class  Shooter implements Subsystem {
     private Servo storage;
     private Servo aligner;
     public static final double NOT_SHOOTING = .6;
-    public static final double SHOOT_ONE =  .46;
+    public static final double SHOOT_ONE =  .45;
     public static final double SHOOT_TWO = .38;
-    public static final double SHOOT_THREE = .27;
+    public static final double SHOOT_THREE = .2;
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
     private static final double PUSH_POSITION =.7;
@@ -73,7 +73,7 @@ public class  Shooter implements Subsystem {
     private void actuallyShoot() {
         setPower(.9);
         ElapsedTime time = new ElapsedTime();
-        while(time.seconds() < 1 && opMode.opModeIsActive());
+        while(opMode.opModeIsActive() && time.seconds() < 1);
         for(double pos : POSITIONS) {
             storage.setPosition(pos);
             time.reset();

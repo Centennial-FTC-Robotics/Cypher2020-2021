@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Kryptos;
+import org.cypher.subsystems.Shooter;
 
 @TeleOp
 public class ServoTest extends LinearOpMode {
@@ -13,7 +14,7 @@ public class ServoTest extends LinearOpMode {
         Kryptos.init(this);
         waitForStart();
         ElapsedTime time = new ElapsedTime();
-        double pos = .1;
+        double pos = Shooter.NOT_SHOOTING;
         while (opModeIsActive()) {
             if(time.milliseconds() > 200) {
                 if(gamepad1.dpad_up && pos < 1) {

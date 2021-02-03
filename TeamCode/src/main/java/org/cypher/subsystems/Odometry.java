@@ -1,6 +1,7 @@
 package org.cypher.subsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+    import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+    import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -14,7 +15,7 @@ public class Odometry implements Subsystem {
 
     private static final int L_DIR = 1;
     private static final int R_DIR = 1;
-    private static final int B_DIR = 1;
+    private static final int B_DIR = -1;
 
     private int lPos;
     private int rPos;
@@ -29,7 +30,7 @@ public class Odometry implements Subsystem {
     private int deltaBPos;
 
     public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0);
-    private final static double LR_RADIUS = -17.536;//165.5;
+    private final static double LR_RADIUS = 17.37831805019305;//165.5;
     private final static double B_RADIUS = LR_RADIUS;//165.5;
 
     private double angle = 0;
@@ -44,10 +45,14 @@ public class Odometry implements Subsystem {
     public double xPos = 0;
     public double yPos = 0;
 
+    private LinearOpMode opMode;
+
     @Override
     public void initialize(OpMode opMode) {
-        leftEncoder = opMode.hardwareMap.get(DcMotorEx.class, "leftOdo");
-        rightEncoder = opMode.hardwareMap.get(DcMotorEx.class, "backRight");
+        this.opMode = (LinearOpMode) opMode;
+
+        leftEncoder = opMode.hardwareMap.get(DcMotorEx.class, "backRight");
+        rightEncoder = opMode.hardwareMap.get(DcMotorEx.class, "frontRight");
         backEncoder = opMode.hardwareMap.get(DcMotorEx.class, "intake");
 
         resetEncoders();
@@ -57,7 +62,7 @@ public class Odometry implements Subsystem {
     public void setStartPos(double xPos, double yPos, double angle) {
         this.xPos = xPos;
         this.yPos = yPos;
-        this.angle = Math.toRadians(angle);
+        startAngle = Math.toRadians(angle);
     }
 
     public void setAngleCorrection(double angleCorrection) {
@@ -122,7 +127,7 @@ public class Odometry implements Subsystem {
 
         deltaLPos = getLPos() - oldLPos;
         deltaRPos = getRPos() - oldRPos;
-        deltaBPos = getBPos() - oldBPos;
+            deltaBPos = getBPos() - oldBPos;
 
         oldLPos = getLPos();
         oldRPos = getRPos();
@@ -160,11 +165,11 @@ public class Odometry implements Subsystem {
     }
 
     private double normalizeRadians(double angle) {
-        while (angle >= 2 * Math.PI) {
+        while (opMode.opModeIsActive() && angle >= 2 * Math.PI) {
             angle -= 2 * Math.PI;
         }
 
-        while (angle < 0.0) {
+        while (opMode.opModeIsActive() && angle < 0.0) {
             angle += 2 * Math.PI;
         }
 
@@ -181,6 +186,7 @@ public class Odometry implements Subsystem {
 
     public Vector getPos() {
         return new Vector(xPos, yPos );
+//        return new Vector(0,yPos);
     }
 
 }

@@ -1,97 +1,278 @@
 package org.cypher.util;
 
+
+import java.util.Arrays;
+
 public class Vector {
-    private double x = 0;
-    private double y = 0;
 
-    public Vector(double x, double y) {
-        this.x = x;
-        this.y = y;
+    private double R;
+    private double theta;
+    private double[] components;
+
+    public Vector(double comp1, double comp2) {
+        components = new double[] {comp1, comp2};
+        genAngles();
     }
 
-    public Vector(Vector vector) {
-        x = vector.getX();
-        y = vector.getY();
-    }
+    public Vector(double newTheta, double newMag, boolean isRad) {
 
-    public double angle() {
-        double angle = Math.toDegrees(Math.atan(this.y/this.x));
-        if (this.x >= 0 && this.y < 0) {
-            angle += 360;
-        } else if (this.x < 0 && this.y >= 0) {
-            angle += 180;
-        } else if (this.x < 0 && this.y < 0) {
-            angle += 180;
+        R = newMag;
+        theta = newTheta;
+
+        if (!isRad) {
+            theta = Math.toRadians(theta);
         }
-        return angle;
+
+        genComp();
     }
 
-    public double magnitude() {
-        return Math.hypot(x, y);
+    public Vector(Vector prevV) {
+
+        components = prevV.getComponents();
+        R = prevV.getMag();
+        theta = prevV.getTheta();
     }
 
-    public void setFromAngle(double angle, double magnitude) {
-        this.x = magnitude * Math.cos(Math.toRadians(angle));
-        this.y = magnitude * Math.sin(Math.toRadians(angle));
+
+
+    public void genComp() {
+        components = new double[2];
+
+        components[0] = R * Math.cos(theta);
+        components[1] = R * Math.sin(theta);
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public void genMag() {
+
+        R = Math.sqrt(Math.pow(components[0], 2) + Math.pow(components[1], 2));
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void genAngles() {
+        genMag();
+
+        if (components[0] == 0 && components[1] == 0) {
+            theta = 0;
+        } else {
+
+            if (components[0] == 0) {
+
+                theta = Math.PI / 2;
+
+                if (components[1] < 0) {
+                    theta *= -1;
+                }
+            } else {
+
+                theta = Math.atan(components[1] / components[0]);
+
+                if (components[0] < 0) {
+
+                    if (components[1] >= 0) {
+
+                        theta += Math.PI;
+                    } else if (components[1] < 0) {
+                        theta -= Math.PI;
+                    } else {
+
+                        theta = Math.PI;
+                    }
+                }
+            }
+        }
     }
 
-    public void setComponents(double x, double y) {
-        this.x = x;
-        this.y = y;
+
+
+    public double getMag() {
+
+        return R;
     }
 
-    public double getX () {
-        return this.x;
+    public double getTheta() {
+
+        return theta;
+    }
+
+    public double[] getComponents() {
+
+        return Arrays.copyOf(components, components.length);
+    }
+
+    public double getX() {
+        return getComponent(0);
     }
 
     public double getY() {
-        return this.y;
+        return getComponent(1);
     }
 
-    public void rotate(double degrees) {
-        double angle = this.angle() + degrees;
-        angle %= 360;
-        if (angle < 0) {
-            angle += 360;
+    public Double getComponent(int component) {
+
+        if (component >= 0 && component < 2) {
+
+            return components[component];
         }
-        this.x = this.magnitude() * Math.cos(Math.toRadians(angle));
-        this.y = this.magnitude() * Math.sin(Math.toRadians(angle));
+
+        return null;
     }
 
+    //---------- Vector Operations ----------//
 
-    public static Vector add(Vector v1, Vector v2) {
-        double x = v1.x + v2.x;
-        double y = v1.y + v2.y;
-        return new Vector(x, y);
+    public void setComponents(double[] newComp) {
+
+        if (newComp.length == 2) {
+
+            components = Arrays.copyOf(newComp, newComp.length);
+            genAngles();
+        }
     }
 
-    public static Vector subtract(Vector v1, Vector v2) {
-        double x = v1.x - v2.x;
-        double y = v1.y - v2.y;
-        return new Vector(x, y);
+    public void add(Vector term_two) {
+
+        double[] two_comp = term_two.getComponents();
+
+        components[0] += two_comp[0];
+        components[1] += two_comp[1];
+
+        genAngles();
     }
 
-    public static Vector multiply(Vector v, double scalar) {
-        double x = v.x * scalar;
-        double y = v.y * scalar;
-        return new Vector(x, y);
+    public void sub(Vector term_two) {
+        components[0] -= term_two.components[0];
+        components[1] -= term_two.components[1];
+
+        genAngles();
     }
 
-    public static double dotProduct(Vector v1, Vector v2) {
-        double angle = Math.max(v1.angle(), v2.angle()) - Math.min(v1.angle(), v2.angle());
-        return v1.magnitude() * v2.magnitude() * Math.cos(Math.toRadians(angle));
+    public static Vector add(Vector term_one, Vector term_two) {
+
+        double[] one_comp = term_one.getComponents();
+        double[] two_comp = term_two.getComponents();
+
+        double newX = one_comp[0] + two_comp[0];
+        double newY = one_comp[1] + two_comp[1];
+
+        return (new Vector(newX, newY));
     }
 
+    public static Vector sub(Vector term_one, Vector term_two) {
+
+        return Vector.add(term_one, invert(term_two));
+    }
+
+    public static Vector invert(Vector term_two) {
+
+        Vector iTwo = new Vector(term_two);
+        iTwo.scale(-1);
+
+        return iTwo;
+    }
+
+    public static Vector scale(Vector term_one, double newScalar) {
+
+        double angle = term_one.getTheta();
+        double scalar = term_one.getMag();
+
+        return new Vector(angle, scalar * newScalar, true);
+    }
+
+    public void zero() {
+
+        this.scale(0);
+    }
+
+    public void scale(double scalar) {
+
+        components[0] *= scalar;
+        components[1] *= scalar;
+    }
+
+    public double dot(Vector term_two) {
+
+        double[] two_comp = term_two.getComponents();
+
+        return ((components[0] * two_comp[0]) + (components[1] * two_comp[1]));
+    }
+
+    public double angleBetween(Vector v2) {
+
+        double dotProduct = this.dot(v2);
+        double magnitudeProducts = R * v2.getMag();
+
+        return Math.acos(dotProduct / magnitudeProducts);
+    }
+
+    public static double standardPosAngle(Vector v) {
+
+        Vector i = new Vector(1d, 0d);
+        Vector j = new Vector(0d, 1d);
+
+        double iAngle = v.angleBetween(i);
+
+        if (v.angleBetween(j) > (Math.PI / 2.0)) {
+
+            iAngle = (Math.PI * 2.0) - iAngle;
+        }
+
+        return iAngle;
+    }
+
+    /**
+     * reverses specified component of the vector
+     * @param dimension
+     */
+    public void flipDimension(int dimension) {
+
+        components[dimension] *= -1;
+        genAngles();
+    }
+
+    /**
+     * This function rotates the vector x radians counterclockwise
+     * @param radians
+     */
+    public void rotate(double radians) {
+
+        theta = (theta + radians) % (2 * Math.PI);
+        genComp();
+    }
+    public String toStringWithoutWeirdBracketThingsSoThatTheLoggerCanWork(){
+        String vector = "";
+        vector = components[0]+","+components[1];
+        return vector;
+    }
     public String toString() {
-        return "x component: " + this.x + "\ny component: " + this.y + "\nangle: " + this.angle() + "\nmagnitude: " + this.magnitude() + "\n";
+
+        String vector = "<";
+        vector += components[0] + ", ";
+        vector += components[1] + ">";
+
+        return vector;
+    }
+
+    public boolean equals(Vector compare) {
+
+        for (int c = 0; c < components.length; c++) {
+
+            if (compare.getComponent(c) != this.getComponent(c)) {
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static Vector[] copy(Vector[] original) {
+
+        Vector[] newList = new Vector[original.length];
+
+        for (int v = 0; v < original.length; v++) {
+
+            newList[v] = new Vector(original[v]);
+        }
+
+        return newList;
     }
 
 }
