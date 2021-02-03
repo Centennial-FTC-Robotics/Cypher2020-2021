@@ -26,12 +26,11 @@ public class Kryptos {
 
     protected static OpMode opMode;
 
-    private static Subsystem[] subsystems = { intake, imu, shooter, driveTrain,wobbleGoalGrabber, odometry,};
+    private static Subsystem[] subsystems = {intake, imu, shooter, driveTrain,wobbleGoalGrabber, odometry};
 
     public static void initWithVision(OpMode opMode) {
         openCV.initialize(opMode);
         init(opMode);
-        Kryptos.wobbleGoalGrabber.grab();
     }
 
     public static void init(OpMode opMode) {

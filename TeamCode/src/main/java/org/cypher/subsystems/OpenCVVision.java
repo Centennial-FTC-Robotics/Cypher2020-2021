@@ -59,12 +59,8 @@ public class OpenCVVision implements Subsystem {
             return rings;
         return finalRingCount;
     }
-    public void saveRingCount() {
-        finalRingCount = rings;
-        isFinal = true;
-    }
 
-        //TODO: currently a copy of wizards, make own version later
+
     class RingDetectorPipeline extends OpenCvPipeline {
 
         final Scalar BLUE = new Scalar(0, 0, 255);

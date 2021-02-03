@@ -75,7 +75,6 @@ public class DriveTrain implements Subsystem {
             Kryptos.odometry.setAngleCorrection(Math.toRadians(angle));
         }
         Kryptos.odometry.updatePos();
-
         odoLoopCount++;
     }
 
@@ -103,92 +102,92 @@ public class DriveTrain implements Subsystem {
         return ticksPerInch / encoder;
     }
 
-    public void move(double foward, double left) {
-        move(foward, left, 1d / 1000, 0, 0, 1d / 100);
-    }
+//    public void move(double foward, double left) {
+//        move(foward, left, 1d / 1000, 0, 0, 1d / 100);
+//    }
 
-    public void move(double forward, double left, double P, double I, double D, double turnP) {
-        int forwardEncoder = convertInchToEncoder(forward);
-        int leftEncoder = convertInchToEncoder(left);
-        int tolerance = convertInchToEncoder(.8);
-
-        double minSpeed = 0.05;
-        double maxSpeed = .3;
-
-        double negI = 0;
-        double posI = 0;
-
-        double negSpeed, posSpeed;
-        int negPos, posPos;
-        int negError = Integer.MAX_VALUE, posError = Integer.MAX_VALUE;
-        int negTarget = forwardEncoder - leftEncoder;
-        int posTarget = forwardEncoder + leftEncoder;
-        int oldNegError = negTarget, oldPosError = posTarget;
-
-        double angleTolerance = .5;
-        double angleMax = .8;
-        double anglePower;
-        double angleDiff = Integer.MAX_VALUE;
-        double startAngle;
-        double currentAngle;
-
-        resetEncoders();
-        Kryptos.setCacheMode(LynxModule.BulkCachingMode.MANUAL);
-        ElapsedTime time = new ElapsedTime();
-        startAngle = Kryptos.imu.getAngle();
-        while (opMode.opModeIsActive() && (Math.abs(negError) > tolerance || Math.abs(posError) > tolerance || Math.abs(angleDiff) > angleTolerance)) {
-            Kryptos.clearCache();
-            negPos = (frontLeft.getCurrentPosition() + backRight.getCurrentPosition()) / 2;
-            posPos = (frontRight.getCurrentPosition() + backLeft.getCurrentPosition()) / 2;
-
-            negError = negTarget - negPos;
-            posError = posTarget - posPos;
-
-            double currentTime = time.seconds();
-            time.reset();
-
-            negI += negError * currentTime;
-            posI += posError * currentTime;
-
-//            negSpeed = clip((P * negError) + (D * ((negError  - oldNegError)/currentTime)) + (I * negI), minSpeed, maxSpeed);
-//            posSpeed = clip((P * posError) + (D * ((posError - oldPosError)/currentTime)) + (I * posI), minSpeed, maxSpeed);
-            negSpeed = P * negError;
-            posSpeed = P * posError;
-            negSpeed = clip(negSpeed, maxSpeed, minSpeed);
-            posSpeed = clip(posSpeed, maxSpeed, minSpeed);
-
-            oldNegError = negError;
-            oldPosError = posError;
-            currentAngle = Kryptos.imu.getAngle();
-
-            angleDiff = getAngleDist(startAngle, currentAngle);
-            if (Math.abs(angleDiff) > angleTolerance) {
-                anglePower = -turnP * angleDiff * getAngleDir(startAngle, currentAngle);
-                anglePower = clip(anglePower, angleMax, .02);
-            } else {
-                anglePower = 0;
-            }
-
-            opMode.telemetry.addData("neg target", negTarget);
-            opMode.telemetry.addData("pos target", posTarget);
-            opMode.telemetry.addData("neg pos", negPos);
-            opMode.telemetry.addData("pos pos", posPos);
-            opMode.telemetry.addData("neg error", negError);
-            opMode.telemetry.addData("pos error", posError);
-            opMode.telemetry.addData("neg speed", negSpeed);
-            opMode.telemetry.addData("pos speed", posSpeed);
-            opMode.telemetry.addData("angle diff", angleDiff);
-            opMode.telemetry.addData("angle dir", getAngleDir(startAngle, currentAngle));
-            opMode.telemetry.update();
-
-            setMotorPowers(negSpeed, posSpeed, anglePower);
-
-
-        }
-        while (opMode.opModeIsActive() && (Math.abs(negError) > tolerance || Math.abs(posError) > tolerance))
-            ;
-        setMotorPowers(0, 0, 0);
-    }
+//    public void move(double forward, double left, double P, double I, double D, double turnP) {
+//        int forwardEncoder = convertInchToEncoder(forward);
+//        int leftEncoder = convertInchToEncoder(left);
+//        int tolerance = convertInchToEncoder(.8);
+//
+//        double minSpeed = 0.05;
+//        double maxSpeed = .3;
+//
+//        double negI = 0;
+//        double posI = 0;
+//
+//        double negSpeed, posSpeed;
+//        int negPos, posPos;
+//        int negError = Integer.MAX_VALUE, posError = Integer.MAX_VALUE;
+//        int negTarget = forwardEncoder - leftEncoder;
+//        int posTarget = forwardEncoder + leftEncoder;
+//        int oldNegError = negTarget, oldPosError = posTarget;
+//
+//        double angleTolerance = .5;
+//        double angleMax = .8;
+//        double anglePower;
+//        double angleDiff = Integer.MAX_VALUE;
+//        double startAngle;
+//        double currentAngle;
+//
+//        resetEncoders();
+//        Kryptos.setCacheMode(LynxModule.BulkCachingMode.MANUAL);
+//        ElapsedTime time = new ElapsedTime();
+//        startAngle = Kryptos.imu.getAngle();
+//        while (opMode.opModeIsActive() && (Math.abs(negError) > tolerance || Math.abs(posError) > tolerance || Math.abs(angleDiff) > angleTolerance)) {
+//            Kryptos.clearCache();
+//            negPos = (frontLeft.getCurrentPosition() + backRight.getCurrentPosition()) / 2;
+//            posPos = (frontRight.getCurrentPosition() + backLeft.getCurrentPosition()) / 2;
+//
+//            negError = negTarget - negPos;
+//            posError = posTarget - posPos;
+//
+//            double currentTime = time.seconds();
+//            time.reset();
+//
+//            negI += negError * currentTime;
+//            posI += posError * currentTime;
+//
+////            negSpeed = clip((P * negError) + (D * ((negError  - oldNegError)/currentTime)) + (I * negI), minSpeed, maxSpeed);
+////            posSpeed = clip((P * posError) + (D * ((posError - oldPosError)/currentTime)) + (I * posI), minSpeed, maxSpeed);
+//            negSpeed = P * negError;
+//            posSpeed = P * posError;
+//            negSpeed = clip(negSpeed, maxSpeed, minSpeed);
+//            posSpeed = clip(posSpeed, maxSpeed, minSpeed);
+//
+//            oldNegError = negError;
+//            oldPosError = posError;
+//            currentAngle = Kryptos.imu.getAngle();
+//
+//            angleDiff = getAngleDist(startAngle, currentAngle);
+//            if (Math.abs(angleDiff) > angleTolerance) {
+//                anglePower = -turnP * angleDiff * getAngleDir(startAngle, currentAngle);
+//                anglePower = clip(anglePower, angleMax, .02);
+//            } else {
+//                anglePower = 0;
+//            }
+//
+//            opMode.telemetry.addData("neg target", negTarget);
+//            opMode.telemetry.addData("pos target", posTarget);
+//            opMode.telemetry.addData("neg pos", negPos);
+//            opMode.telemetry.addData("pos pos", posPos);
+//            opMode.telemetry.addData("neg error", negError);
+//            opMode.telemetry.addData("pos error", posError);
+//            opMode.telemetry.addData("neg speed", negSpeed);
+//            opMode.telemetry.addData("pos speed", posSpeed);
+//            opMode.telemetry.addData("angle diff", angleDiff);
+//            opMode.telemetry.addData("angle dir", getAngleDir(startAngle, currentAngle));
+//            opMode.telemetry.update();
+//
+//            setMotorPowers(negSpeed, posSpeed, anglePower);
+//
+//
+//        }
+//        while (opMode.opModeIsActive() && (Math.abs(negError) > tolerance || Math.abs(posError) > tolerance))
+//            ;
+//        setMotorPowers(0, 0, 0);
+//    }
 
     public void turnRelative(double targetAngle) {
         turnAbsolute(AngleUnit.normalizeDegrees(targetAngle + Kryptos.imu.getAngle()));
@@ -243,6 +242,7 @@ public class DriveTrain implements Subsystem {
 
         return angleDir;
     }
+
 
     public static double clip(double val, double max, double min) {
         int sign;
@@ -307,8 +307,6 @@ public class DriveTrain implements Subsystem {
 
 
         setMotorPowers(diag1, diag2, anglePower);
-
-
 
         Vector error = Vector.sub(targetPos,currentPos);
 

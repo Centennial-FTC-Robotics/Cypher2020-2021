@@ -21,7 +21,6 @@ public class BlueSideAuto extends LinearOpMode {
         Kryptos.odometry.setStartPos(0,16,0);
         waitForStart();
 
-
         double ringCount = Kryptos.openCV.getRings();
         //hello! :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu
 

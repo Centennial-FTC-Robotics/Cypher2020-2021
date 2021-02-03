@@ -2,10 +2,6 @@ package org.cypher.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.subsystems.DriveTrain;
-
-import java.nio.file.StandardOpenOption;
-
 public class PIDController {
     private float kP, kI, kD;
     private float i;
@@ -68,8 +64,5 @@ public class PIDController {
         return i;
     }
 
-    public float getIDir() {
-        return (float) (oldError * time.seconds());
-    }
 
 }

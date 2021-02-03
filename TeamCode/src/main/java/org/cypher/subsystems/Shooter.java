@@ -77,13 +77,13 @@ public class  Shooter implements Subsystem {
         for(double pos : POSITIONS) {
             storage.setPosition(pos);
             time.reset();
-            while(time.seconds() < .3 && opMode.opModeIsActive());
+            while(opMode.opModeIsActive() && time.seconds() < .3 );
             aligner.setPosition(PUSH_POSITION);
             time.reset();
-            while (time.seconds() < .3 && opMode.opModeIsActive());
+            while (opMode.opModeIsActive() && time.seconds() < .3);
             aligner.setPosition(REST_POSITION);
             time.reset();
-            while (time.seconds() < .3 && opMode.opModeIsActive());
+            while (opMode.opModeIsActive() && time.seconds() < .3);
         }
 
         setPower(0);
