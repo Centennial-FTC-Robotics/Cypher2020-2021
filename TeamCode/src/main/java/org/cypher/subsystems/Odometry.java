@@ -28,8 +28,11 @@ public class Odometry implements Subsystem {
     private int deltaLPos;
     private int deltaRPos;
     private int deltaBPos;
+    
+//    for the new encoders
+//    public final static double ENCODER_COUNTS_PER_INCH = 8192.0 / (2.0 * Math.PI * 1.0);
+    public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0);
 
-    public final static double ENCODER_COUNTS_PER_INCH = 8192.0 / (2.0 * Math.PI * 1.0);
 
     private final static double LR_RADIUS = 17.37831805019305;
     private final static double B_RADIUS = LR_RADIUS;
