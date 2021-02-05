@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Kryptos;
+
 import org.cypher.util.Vector;
 
 @TeleOp(name = "Basic TeleOp", group = "Tele-Op")
@@ -17,22 +18,25 @@ public class BasicTeleOp extends LinearOpMode {
         waitForStart();
         double leftX, leftY, rightX;
         double[] powers;
-        boolean intakeOn = false;
-        int intakeDir = 1;
-        boolean isGrabbed = false;
-        double intakePower = 0;
-        ElapsedTime time = new ElapsedTime();
         float factor = 1;
 
+        double intakePower = 0;
+        boolean intakeOn = false;
+        int intakeDir = 1;
+
+        boolean isGrabbed = false;
+
+        ElapsedTime time = new ElapsedTime();
         ElapsedTime gameTime = new ElapsedTime();
 
         boolean endGame = false;
+
 //        Kryptos.readOdoData();
 
         Kryptos.imu.setInitAngle(90);
         Kryptos.odometry.setStartPos(0, 0, 90);
-
         Kryptos.wobbleGoalGrabber.setHingeIn(false);
+
         while (opModeIsActive()) {
             Kryptos.driveTrain.updatePos();
             Vector pos = Kryptos.odometry.getPos();
