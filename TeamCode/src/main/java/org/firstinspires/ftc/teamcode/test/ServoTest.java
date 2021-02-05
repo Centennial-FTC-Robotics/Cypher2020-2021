@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.cypher.Kryptos;
 import org.cypher.subsystems.Shooter;
 
-@TeleOp
+@TeleOp(name = "Servo Positioning Tester", group = "Test")
 public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -16,12 +16,12 @@ public class ServoTest extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
         double pos = Shooter.NOT_SHOOTING;
         while (opModeIsActive()) {
-            if(time.milliseconds() > 200) {
-                if(gamepad1.dpad_up && pos < 1) {
-                    pos+=.02;
+            if (time.milliseconds() > 200) {
+                if (gamepad1.dpad_up && pos < 1) {
+                    pos += .02;
                     time.reset();
-                } else if(gamepad1.dpad_down && pos > 0) {
-                    pos-=.02;
+                } else if (gamepad1.dpad_down && pos > 0) {
+                    pos -= .02;
                     time.reset();
                 }
             }

@@ -1,7 +1,5 @@
 package org.cypher.subsystems;
 
-import android.media.Image;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.cypher.Subsystem;
@@ -19,12 +17,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class OpenCVVision implements Subsystem {
     OpenCvCamera camera;
-    //TODO: do it luqman
     private OpMode opMode;
 
     private int rings = -1;
-    private int finalRingCount;
-    boolean isFinal = false;
 
     @Override
     public void initialize(OpMode opMode) {
@@ -35,43 +30,32 @@ public class OpenCVVision implements Subsystem {
         camera.openCameraDevice();
 
         camera.setPipeline(new RingDetectorPipeline());
-        
+
         camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            public void onOpened() {
+                camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
     }
 
-    public void stop() {
-        camera.stopStreaming();
-    }
-    
-
-
     public int getRings() {
-        if(!isFinal)
-            return rings;
-        return finalRingCount;
+        return rings;
     }
-
 
     class RingDetectorPipeline extends OpenCvPipeline {
 
         final Scalar BLUE = new Scalar(0, 0, 255);
         final Scalar GREEN = new Scalar(0, 255, 0);
 
-        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(110,   190);
+        final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(110, 190);
 
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 50;
 
-        final int FOUR_RING_THRESHOLD = 140 ;
+        final int FOUR_RING_THRESHOLD = 140;
         final int ONE_RING_THRESHOLD = 136;
 
         Point region1_pointA = new Point(
@@ -105,7 +89,6 @@ public class OpenCVVision implements Subsystem {
             avg1 = (int) Core.mean(region1_Cb).val[0];
 
 
-
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
@@ -115,15 +98,15 @@ public class OpenCVVision implements Subsystem {
 
 
             rings = -1; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD) {
+            if (avg1 > FOUR_RING_THRESHOLD) {
                 rings = 4;
             } else if (avg1 > ONE_RING_THRESHOLD) {
                 rings = 1;
-            } else{
+            } else {
                 rings = 0;
             }
 
-            opMode.telemetry.addData("value",avg1 );
+            opMode.telemetry.addData("value", avg1);
             opMode.telemetry.addData("rings", rings);
             opMode.telemetry.update();
 

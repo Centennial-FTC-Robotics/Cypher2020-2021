@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.cypher.Kryptos;
 
-@Autonomous
+@Disabled
+@Autonomous(name = "Turning Test", group = "Test")
 public class Turn extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

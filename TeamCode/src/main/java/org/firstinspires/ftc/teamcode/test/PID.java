@@ -1,16 +1,14 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.RobotConfigNameable;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Kryptos;
 import org.cypher.util.PIDController;
 import org.cypher.util.Vector;
 
-@Autonomous
+@Autonomous(name = "PID Test", group = "Test")
 public class PID extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,31 +16,32 @@ public class PID extends LinearOpMode {
         waitForStart();
 
         float P = 0.05f;
-        PIDController controller = new PIDController(P,0,.03f);
+        PIDController controller = new PIDController(P, 0, .03f);
         ElapsedTime time = new ElapsedTime();
         int dir = -1;
-        Kryptos.odometry.setStartPos(0,0,0);
+        Kryptos.odometry.setStartPos(0, 0, 0);
         while (opModeIsActive()) {
-            controller.editConstants(P,0,0);
+            controller.editConstants(P, 0, 0);
             telemetry.addData("p", P);
             Vector pos = Kryptos.odometry.getPos();
-            telemetry.addData("x coord",pos.getX() );
-            telemetry.addData("y coord",pos.getY());
+            telemetry.addData("x coord", pos.getX());
+            telemetry.addData("y coord", pos.getY());
             telemetry.addData("current heading", Math.toDegrees(Kryptos.odometry.getHeading()));
             telemetry.update();
-            if(time.milliseconds() > 100) {
+            if (time.milliseconds() > 100) {
                 if (gamepad1.dpad_up) {
-                    P+= .02d;
+                    P += .02d;
                 } else if (gamepad1.dpad_down) {
-                    P-=.02f;
+                    P -= .02f;
                 } else if (gamepad1.a && !gamepad1.start) {
-                    if(dir == -1) {
-                        while (Kryptos.driveTrain.moveToPosition(new Vector(0, 22.75), 0, .5, .05, 1, 1));
+                    if (dir == -1) {
+                        while (Kryptos.driveTrain.moveToPosition(new Vector(0, 22.75), 0, .5, .05, 1, 1))
+                            ;
                         dir = 1;
-                    }
-                    else {
+                    } else {
                         dir = -1;
-                        while(Kryptos.driveTrain.moveToPosition(new Vector(0,0),0,.5,.05,1,1 ));
+                        while (Kryptos.driveTrain.moveToPosition(new Vector(0, 0), 0, .5, .05, 1, 1))
+                            ;
                     }
 
                 }

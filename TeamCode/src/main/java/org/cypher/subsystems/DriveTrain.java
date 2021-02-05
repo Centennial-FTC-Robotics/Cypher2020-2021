@@ -1,15 +1,9 @@
 package org.cypher.subsystems;
 
-import android.graphics.YuvImage;
-
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.RobotConfigNameable;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.cypher.Kryptos;
 import org.cypher.Subsystem;
@@ -36,10 +30,9 @@ public class DriveTrain implements Subsystem {
     private final double distanceInWheelRotation = wheelDiameter * Math.PI;
     private final double ticksPerInch = distanceInWheelRotation / ticksPerWheelRotation;
 
-    private final PIDController moveController = new PIDController(.05f,0.05f,0.3f);
-    private final PIDController xController = new PIDController(.12f,.01f,0f);
-    private final PIDController yController = new PIDController(.12f,.007f,0.01f);
-    private final PIDController angleController = new PIDController(.1f,0.083f,0.09f);
+    private final PIDController xController = new PIDController(.12f, .01f, 0f);
+    private final PIDController yController = new PIDController(.12f, .007f, 0.01f);
+    private final PIDController angleController = new PIDController(.1f, 0.083f, 0.09f);
 
     private Vector currentPos;
     private Vector robotCentric;
@@ -267,7 +260,7 @@ public class DriveTrain implements Subsystem {
     }
 
     public boolean moveToPosition(Vector targetPos, double heading) {
-        return moveToPosition(targetPos,heading,.5,.05,1,1.5);
+        return moveToPosition(targetPos, heading, .5, .05, 1, 1.5);
     }
 
     public boolean moveToPosition(Vector targetPos, double heading, double maxSpeed, double minSpeed, double tolerance, double headingTolerance) {
@@ -285,7 +278,7 @@ public class DriveTrain implements Subsystem {
         double headingDiff = getAngleDist(heading, Math.toDegrees(Kryptos.odometry.getHeading()));
 
         double maxValue = Math.max(diag1, diag2);
-        if(maxValue > maxSpeed){
+        if (maxValue > maxSpeed) {
             diag1 = (diag1 / maxValue) * maxSpeed;
             diag2 = (diag2 / maxValue) * maxSpeed;
         }
@@ -297,7 +290,7 @@ public class DriveTrain implements Subsystem {
 
 
         anglePower = clip(anglePower, .2, 0.1);
-        if(Math.abs(headingDiff) <= headingTolerance) {
+        if (Math.abs(headingDiff) <= headingTolerance) {
             anglePower = 0;
         }
 
@@ -308,7 +301,7 @@ public class DriveTrain implements Subsystem {
 
         setMotorPowers(diag1, diag2, anglePower);
 
-        Vector error = Vector.sub(targetPos,currentPos);
+        Vector error = Vector.sub(targetPos, currentPos);
 
         double xDiff = error.getX();
         double yDiff = error.getY();
@@ -317,7 +310,7 @@ public class DriveTrain implements Subsystem {
 //        opMode.telemetry.addData("diag1", diag1);
 //        opMode.telemetry.addData("diag2", diag2);
         opMode.telemetry.addData("xdiff", xDiff);
-        if(item == null) {
+        if (item == null) {
             item = opMode.telemetry.addData("ydiff", yDiff);
         } else {
             item.setRetained(false);
@@ -332,7 +325,7 @@ public class DriveTrain implements Subsystem {
 
         opMode.telemetry.update();
         if ((Math.abs(xDiff) < tolerance && Math.abs(yDiff) < tolerance && Math.abs(headingDiff) < headingTolerance) || !opMode.opModeIsActive()) {
-            setMotorPowers(0,0,0);
+            setMotorPowers(0, 0, 0);
             xController.reset();
             yController.reset();
             angleController.reset();
@@ -341,8 +334,8 @@ public class DriveTrain implements Subsystem {
         return true;
     }
 
-    public void getMotorPowers (Vector targetPosition, double targetAngle) {
-        Vector error = Vector.sub(targetPosition,currentPos);
+    public void getMotorPowers(Vector targetPosition, double targetAngle) {
+        Vector error = Vector.sub(targetPosition, currentPos);
 
         opMode.telemetry.addData("field centric error", error);
 
@@ -360,10 +353,10 @@ public class DriveTrain implements Subsystem {
 
         double leftx = robotCentric.getComponent(0);
         double lefty = robotCentric.getComponent(1);
-        double scalar = Math.max(Math.abs(lefty-leftx), Math.abs(lefty+leftx)); //scalar and magnitude scale the motor powers based on distance from joystick origin
+        double scalar = Math.max(Math.abs(lefty - leftx), Math.abs(lefty + leftx)); //scalar and magnitude scale the motor powers based on distance from joystick origin
         double magnitude = Math.sqrt(Math.pow(lefty, 2) + Math.pow(leftx, 2));
 
-        power = new Vector((lefty+leftx)*magnitude/scalar, (lefty-leftx)*magnitude/scalar);
+        power = new Vector((lefty + leftx) * magnitude / scalar, (lefty - leftx) * magnitude / scalar);
 //
         opMode.telemetry.addData("x power", leftx);
         opMode.telemetry.addData("y power", lefty);

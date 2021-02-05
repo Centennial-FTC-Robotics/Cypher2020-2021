@@ -9,17 +9,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Subsystem;
 
-public class  Shooter implements Subsystem {
+public class Shooter implements Subsystem {
     private DcMotor shooter;
     private Servo storage;
     private Servo aligner;
     public static final double NOT_SHOOTING = .6;
-    public static final double SHOOT_ONE =  .45;
+    public static final double SHOOT_ONE = .45;
     public static final double SHOOT_TWO = .38;
-    public static final double SHOOT_THREE = .2;
+    public static final double SHOOT_THREE = .54;
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
-    private static final double PUSH_POSITION =.7;
+    private static final double PUSH_POSITION = .7;
     private static final double REST_POSITION = .5;
 
 
@@ -58,9 +58,9 @@ public class  Shooter implements Subsystem {
     }
 
     public void shoot(boolean useThread) {
-        if(!isShooting) {
+        if (!isShooting) {
             isShooting = true;
-            if(useThread) {
+            if (useThread) {
                 ShootingThread thread = new ShootingThread();
                 thread.start();
             } else {
@@ -73,17 +73,17 @@ public class  Shooter implements Subsystem {
     private void actuallyShoot() {
         setPower(.9);
         ElapsedTime time = new ElapsedTime();
-        while(opMode.opModeIsActive() && time.seconds() < 1);
-        for(double pos : POSITIONS) {
+        while (opMode.opModeIsActive() && time.seconds() < 1) ;
+        for (double pos : POSITIONS) {
             storage.setPosition(pos);
             time.reset();
-            while(opMode.opModeIsActive() && time.seconds() < .3 );
+            while (opMode.opModeIsActive() && time.seconds() < .3) ;
             aligner.setPosition(PUSH_POSITION);
             time.reset();
-            while (opMode.opModeIsActive() && time.seconds() < .3);
+            while (opMode.opModeIsActive() && time.seconds() < .3) ;
             aligner.setPosition(REST_POSITION);
             time.reset();
-            while (opMode.opModeIsActive() && time.seconds() < .3);
+            while (opMode.opModeIsActive() && time.seconds() < .3) ;
         }
 
         setPower(0);
@@ -91,7 +91,7 @@ public class  Shooter implements Subsystem {
         isShooting = false;
     }
 
-    public void moveServo(double pos)  {
+    public void moveServo(double pos) {
         storage.setPosition(pos);
     }
 

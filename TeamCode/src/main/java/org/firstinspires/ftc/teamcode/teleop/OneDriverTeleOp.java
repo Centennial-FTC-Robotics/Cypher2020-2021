@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.cypher.Kryptos;
 import org.cypher.util.Vector;
 
-@TeleOp(name="One Driver TeleOp")
+@TeleOp(name = "One Driver TeleOp", group = "Tele-Op")
 public class OneDriverTeleOp extends LinearOpMode {
 
     @Override
@@ -20,35 +20,29 @@ public class OneDriverTeleOp extends LinearOpMode {
         boolean intakeOn = false;
         int intakeDir = 1;
         boolean isGrabbed = false;
-        int wobbleGoalDir = -1;
-        boolean isWobbleGoalMoving = false;
-        ElapsedTime wobbleGoalTime = new ElapsedTime();
         double intakePower = 0;
         ElapsedTime time = new ElapsedTime();
-        double wobbleGoalPower = 0;
         float factor = 1;
-
-        double hingeTimer = 1.5;
         ElapsedTime gameTime = new ElapsedTime();
 
         boolean endGame = false;
-        Kryptos.odometry.setStartPos(0 ,0,270);
+        Kryptos.odometry.setStartPos(0, 0, 270);
         Kryptos.imu.setInitAngle(-90);
         Kryptos.wobbleGoalGrabber.setHingeIn(false);
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             Kryptos.driveTrain.updatePos();
 //
-                Vector pos = Kryptos.odometry.getPos();
-                telemetry.addData("x coord",pos.getX() );
-                telemetry.addData("y coord",pos.getY());
-                telemetry.addData("current heading", Math.toDegrees(Kryptos.odometry.getHeading()));
-                telemetry.update();
+            Vector pos = Kryptos.odometry.getPos();
+            telemetry.addData("x coord", pos.getX());
+            telemetry.addData("y coord", pos.getY());
+            telemetry.addData("current heading", Math.toDegrees(Kryptos.odometry.getHeading()));
+            telemetry.update();
 
-                if(time.milliseconds() > 250) {
+            if (time.milliseconds() > 250) {
 
-                    if(gamepad1.a && !gamepad1.start) {
+                if (gamepad1.a && !gamepad1.start) {
                     intakeOn = !intakeOn;
-                    if(intakeOn)
+                    if (intakeOn)
                         intakePower = .7;
                     else
                         intakePower = 0;
@@ -56,22 +50,22 @@ public class OneDriverTeleOp extends LinearOpMode {
                     time.reset();
                 }
 
-                if(gamepad1.right_bumper) {
+                if (gamepad1.right_bumper) {
                     time.reset();
                     intakeDir *= -1;
                 }
 
-                if(gamepad1.left_trigger > 0) {
+                if (gamepad1.left_trigger > 0) {
                     factor = .2f;
                 }
 
-                if(gamepad1.y) {
+                if (gamepad1.y) {
                     Kryptos.shooter.shoot(true);
                     time.reset();
                 }
 
-                if(gamepad1.x) {
-                    if(isGrabbed)
+                if (gamepad1.x) {
+                    if (isGrabbed)
                         Kryptos.wobbleGoalGrabber.release();
                     else
                         Kryptos.wobbleGoalGrabber.grab();
@@ -80,13 +74,13 @@ public class OneDriverTeleOp extends LinearOpMode {
                     time.reset();
                 }
 
-                    if(gamepad1.b && !gamepad1.start ) {
+                if (gamepad1.b && !gamepad1.start) {
                     Kryptos.wobbleGoalGrabber.flipHinge();
                 }
             }
-                Kryptos.intake.setIntakePower(intakePower * intakeDir);
+            Kryptos.intake.setIntakePower(intakePower * intakeDir);
 
-            if(!(gamepad1.left_trigger > 0)) {
+            if (!(gamepad1.left_trigger > 0)) {
                 factor = 1;
             }
             leftX = gamepad1.left_stick_x;
@@ -99,15 +93,15 @@ public class OneDriverTeleOp extends LinearOpMode {
             Kryptos.driveTrain.setPowers(powers[0], powers[1], powers[2], powers[3], factor);
 
 
-            if(gameTime.seconds() >= 90 && !endGame) {
+            if (gameTime.seconds() >= 90 && !endGame) {
                 telemetry.speak("were in the endgame now");
                 endGame = true;
             }
 
-            if(gameTime.seconds() >= 120) {
+            if (gameTime.seconds() >= 120) {
                 telemetry.speak("game over");
                 requestOpModeStop();
             }
-          }
+        }
     }
 }

@@ -35,7 +35,7 @@ public class OdoCal extends LinearOpMode {
     final double PIVOT_SPEED = 0.5;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 4096.0/(2.0*1.0*Math.PI);
+    final double COUNTS_PER_INCH = 4096.0 / (2.0 * 1.0 * Math.PI);
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -55,11 +55,11 @@ public class OdoCal extends LinearOpMode {
 
         //Initialize IMU parameters
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
         telemetry.addData("Odometry System Calibration Status", "IMU Init Complete");
@@ -72,15 +72,15 @@ public class OdoCal extends LinearOpMode {
         waitForStart();
 
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
-        while(getZAngle() < 90 && opModeIsActive()){
+        while (getZAngle() < 90 && opModeIsActive()) {
             right_front.setPower(-PIVOT_SPEED);
             right_back.setPower(-PIVOT_SPEED);
             left_front.setPower(PIVOT_SPEED);
             left_back.setPower(PIVOT_SPEED);
-            if(getZAngle() < 60) {
+            if (getZAngle() < 60) {
                 setPowerAll(-PIVOT_SPEED, -PIVOT_SPEED, PIVOT_SPEED, PIVOT_SPEED);
-            }else{
-                setPowerAll(-PIVOT_SPEED/2, -PIVOT_SPEED/2, PIVOT_SPEED/2, PIVOT_SPEED/2);
+            } else {
+                setPowerAll(-PIVOT_SPEED / 2, -PIVOT_SPEED / 2, PIVOT_SPEED / 2, PIVOT_SPEED / 2);
             }
 
             telemetry.addData("IMU Angle", getZAngle());
@@ -90,7 +90,7 @@ public class OdoCal extends LinearOpMode {
         //Stop the robot
         setPowerAll(0, 0, 0, 0);
         timer.reset();
-        while(timer.milliseconds() < 1000 && opModeIsActive()){
+        while (timer.milliseconds() < 1000 && opModeIsActive()) {
             telemetry.addData("IMU Angle", getZAngle());
             telemetry.update();
         }
@@ -105,19 +105,19 @@ public class OdoCal extends LinearOpMode {
        */
         double encoderDifference = verticalLeft.getCurrentPosition() - verticalRight.getCurrentPosition();
 
-        double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
+        double verticalEncoderTickOffsetPerDegree = encoderDifference / angle;
 
         //encoderCounts ->convert to inch /2 * 360/angle / pi
-        double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH);
+        double wheelBaseSeparation = (2 * 90 * verticalEncoderTickOffsetPerDegree) / (Math.PI * COUNTS_PER_INCH);
         //wheelBaseSeparation = (2.0*angle*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH)
 
-        horizontalTickOffset = (-horizontal.getCurrentPosition())/Math.toRadians(getZAngle());
+        horizontalTickOffset = (-horizontal.getCurrentPosition()) / Math.toRadians(getZAngle());
 
         //Write the constants to text files
         ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));
         ReadWriteFile.writeFile(horizontalTickOffsetFile, String.valueOf(horizontalTickOffset));
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("Odometry System Calibration Status", "Calibration Complete");
             //Display calculated constants
             telemetry.addData("Wheel Base Separation", wheelBaseSeparation);
@@ -125,7 +125,7 @@ public class OdoCal extends LinearOpMode {
 
             //Display raw values
             telemetry.addData("IMU Angle", getZAngle());
-            telemetry.addData("Vertical Left Position",verticalLeft.getCurrentPosition());
+            telemetry.addData("Vertical Left Position", verticalLeft.getCurrentPosition());
             telemetry.addData("Vertical Right Position", verticalRight.getCurrentPosition());
             telemetry.addData("Horizontal Position", -horizontal.getCurrentPosition());
             telemetry.addData("Vertical Encoder Offset", verticalEncoderTickOffsetPerDegree);
@@ -135,7 +135,7 @@ public class OdoCal extends LinearOpMode {
         }
     }
 
-    private void initHardwareMap(String rfName, String rbName, String lfName, String lbName, String vlEncoderName, String vrEncoderName, String hEncoderName){
+    private void initHardwareMap(String rfName, String rbName, String lfName, String lbName, String vlEncoderName, String vrEncoderName, String hEncoderName) {
         right_front = hardwareMap.dcMotor.get(rfName);
         right_back = hardwareMap.dcMotor.get(rbName);
         left_front = hardwareMap.dcMotor.get(lfName);
@@ -181,20 +181,22 @@ public class OdoCal extends LinearOpMode {
 
     /**
      * Gets the orientation of the robot using the REV IMU
+     *
      * @return the angle of the robot
      */
-    private double getZAngle(){
+    private double getZAngle() {
         return (imu.getAngularOrientation().firstAngle);
     }
 
     /**
      * Sets power to all four drive motors
+     *
      * @param rf power for right front motor
      * @param rb power for right back motor
      * @param lf power for left front motor
      * @param lb power for left back motor
      */
-    private void setPowerAll(double rf, double rb, double lf, double lb){
+    private void setPowerAll(double rf, double rb, double lf, double lb) {
         right_front.setPower(rf);
         right_back.setPower(rb);
         left_front.setPower(lf);

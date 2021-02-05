@@ -8,6 +8,7 @@ import org.cypher.Subsystem;
 
 public class Intake implements Subsystem {
     private DcMotor intake;
+
     @Override
     public void initialize(OpMode opMode) {
         intake = opMode.hardwareMap.dcMotor.get("intake");

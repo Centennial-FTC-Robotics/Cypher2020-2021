@@ -29,15 +29,15 @@ public class Odometry implements Subsystem {
     private int deltaRPos;
     private int deltaBPos;
 
-    public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0);
-    private final static double LR_RADIUS = 17.37831805019305;//165.5;
-    private final static double B_RADIUS = LR_RADIUS;//165.5;
+    public final static double ENCODER_COUNTS_PER_INCH = 8192.0 / (2.0 * Math.PI * 1.0);
+
+    private final static double LR_RADIUS = 17.37831805019305;
+    private final static double B_RADIUS = LR_RADIUS;
 
     private double angle = 0;
     private double angleCorrection = 0;
     private double deltaAngle = 0;
     private double startAngle = 0;
-    private double oldAngle = 0;
 
     public double deltax = 0;
     public double deltay = 0;
@@ -66,7 +66,7 @@ public class Odometry implements Subsystem {
     }
 
     public void setAngleCorrection(double angleCorrection) {
-        this.angleCorrection = normalizeRadians(angleCorrection-angle+this.angleCorrection);
+        this.angleCorrection = normalizeRadians(angleCorrection - angle + this.angleCorrection);
     }
 
     public void updateEncoders() {
@@ -92,14 +92,13 @@ public class Odometry implements Subsystem {
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         startAngle = 0;
         angle = 0;
         angleCorrection = 0;
-        oldAngle = 0;
         xPos = 0;
         oldBPos = 0;
         oldLPos = 0;
@@ -111,7 +110,6 @@ public class Odometry implements Subsystem {
         deltaLPos = 0;
         deltaRPos = 0;
         deltaBPos = 0;
-
     }
 
     public double[] convertFieldCentric(double xPos, double yPos) {
@@ -127,18 +125,14 @@ public class Odometry implements Subsystem {
 
         deltaLPos = getLPos() - oldLPos;
         deltaRPos = getRPos() - oldRPos;
-            deltaBPos = getBPos() - oldBPos;
+        deltaBPos = getBPos() - oldBPos;
 
         oldLPos = getLPos();
         oldRPos = getRPos();
         oldBPos = getBPos();
 
-        deltaAngle = (deltaRPos - deltaLPos)/(2.0*LR_RADIUS*ENCODER_COUNTS_PER_INCH); //it's in radians
-        angle = /*normalizeRadians(heading + deltaHeading);*/ normalizeRadians((getRPos()-getLPos())/(2.0*LR_RADIUS*ENCODER_COUNTS_PER_INCH) + startAngle+angleCorrection);
-
-//
-//        deltax = deltaBPos/ENCODER_COUNTS_PER_INCH;
-//        deltay = deltaLPos/ENCODER_COUNTS_PER_INCH;
+        deltaAngle = (deltaRPos - deltaLPos) / (2.0 * LR_RADIUS * ENCODER_COUNTS_PER_INCH); //it's in radians
+        angle = normalizeRadians((getRPos() - getLPos()) / (2.0 * LR_RADIUS * ENCODER_COUNTS_PER_INCH) + startAngle + angleCorrection);
 
         if (Math.abs(deltaAngle) == 0) {
             deltax = deltaBPos;
@@ -161,7 +155,7 @@ public class Odometry implements Subsystem {
 
 
     public float encoderToInch(double encoder) {
-        return (float)(encoder/ENCODER_COUNTS_PER_INCH);
+        return (float) (encoder / ENCODER_COUNTS_PER_INCH);
     }
 
     private double normalizeRadians(double angle) {
@@ -180,13 +174,9 @@ public class Odometry implements Subsystem {
         return angle;
     }
 
-    public double getDeltaAngle() {
-        return deltaAngle;
-    }
 
     public Vector getPos() {
-        return new Vector(xPos, yPos );
-//        return new Vector(0,yPos);
+        return new Vector(xPos, yPos);
     }
 
 }

@@ -8,7 +8,7 @@ import org.cypher.Kryptos;
 import org.cypher.util.Vector;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Autonomous(name="Blue one wobble goal auto")
+@Autonomous(name = "Blue Side 1 Wobble Goal", group = "Blue Auto")
 public class BlueOneWobbleAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,26 +18,29 @@ public class BlueOneWobbleAuto extends LinearOpMode {
 
         Kryptos.imu.setInitAngle(0);
         //TODO: think abt this and make it work when brain is working
-        Kryptos.odometry.setStartPos(0,16,0);
+        Kryptos.odometry.setStartPos(0, 16, 0);
         waitForStart();
 
 
         double ringCount = Kryptos.openCV.getRings();
 
-        Telemetry.Item melody =  telemetry.addData("hello! you got thisss u r stroncc u r smart u can do it :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu",null);
+        Telemetry.Item melody = telemetry.addData("hello! you got thisss u r stroncc u r smart u can do it :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu", null);
         melody.setRetained(true);
-        if(ringCount == 0) {
-            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0,0),0));
-            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3, 0),0));
-        }
-        else if(ringCount == 1) {
-            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0,0),0));
-            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 4,0),0));
-            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 4,22),0));
+        if (ringCount == 0) {
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0, 0), 0)) ;
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3, 0), 0))
+                ;
+        } else if (ringCount == 1) {
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0, 0), 0)) ;
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 4, 0), 0))
+                ;
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 4, 22), 0))
+                ;
 
         } else {
-            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0,0),0));
-            while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 5, 0),0));
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0, 0), 0)) ;
+            while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 5, 0), 0))
+                ;
         }
 
 //        //move wobble goal
@@ -47,7 +50,7 @@ public class BlueOneWobbleAuto extends LinearOpMode {
         Kryptos.wobbleGoalGrabber.release();
 
         ElapsedTime time = new ElapsedTime();
-        while (opModeIsActive() && time.seconds() < 1.5);
+        while (opModeIsActive() && time.seconds() < 1.5) ;
         Vector pos = Kryptos.odometry.getPos();
 //
 //
@@ -85,12 +88,14 @@ public class BlueOneWobbleAuto extends LinearOpMode {
 //        while (opModeIsActive() && time.seconds() < .5);
 ////
 
-        while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 2.5,32.75), 90));
+        while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 2.5, 32.75), 90))
+            ;
 
         Kryptos.shooter.shoot(false);
         Kryptos.shooter.shoot(false);
 
-        while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3.5,22.75),90));
+        while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3.5, 22.75), 90))
+            ;
 
     }
 }

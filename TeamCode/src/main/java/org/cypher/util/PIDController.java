@@ -50,8 +50,8 @@ public class PIDController {
             i += toAdd;
         else if (i < -1.3 && toAdd > 0)
             i += toAdd;
-        else if(i > -1.3&& i < 1.3)
-            i+= toAdd;
+        else if (i > -1.3 && i < 1.3)
+            i += toAdd;
         float d = (float) ((error - oldError) / time.seconds());
 
         oldError = error;
