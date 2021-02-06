@@ -2,8 +2,7 @@ package org.cypher.purepursuit;
 
 import com.qualcomm.robotcore.util.Range;
 
-import org.cypher.purepursuit.IntersectionPoint;
-import org.cypher.Vector;
+import org.cypher.util.Vector;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

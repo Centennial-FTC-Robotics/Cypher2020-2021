@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.cypher.util.Kryptos;
+import org.cypher.Kryptos;
 
 @Disabled
 @Autonomous(name = "Turning Test", group = "Test")

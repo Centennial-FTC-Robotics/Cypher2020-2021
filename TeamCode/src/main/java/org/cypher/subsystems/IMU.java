@@ -5,7 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.cypher.util.Subsystem;
+import org.cypher.Subsystem;
 
 public class IMU implements Subsystem {
     private double angle, initAngle = 0;

@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.util.Kryptos;
-import org.cypher.PIDController;
-import org.cypher.Vector;
+import org.cypher.Kryptos;
+import org.cypher.util.PIDController;
+import org.cypher.util.Vector;
 
 @Autonomous(name = "PID Test", group = "Test")
 public class PID extends LinearOpMode {

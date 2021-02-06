@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.cypher.util.Kryptos;
-import org.cypher.Vector;
+import org.cypher.Kryptos;
+import org.cypher.util.Vector;
 
 @Disabled
 @TeleOp(name = "Test TeleOp")

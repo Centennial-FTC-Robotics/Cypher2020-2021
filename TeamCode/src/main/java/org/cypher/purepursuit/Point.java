@@ -1,6 +1,6 @@
 package org.cypher.purepursuit;
 
-import org.cypher.Vector;
+import org.cypher.util.Vector;
 
 public class Point {
     double x;

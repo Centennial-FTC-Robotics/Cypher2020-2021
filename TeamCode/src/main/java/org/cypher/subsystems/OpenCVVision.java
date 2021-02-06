@@ -2,7 +2,7 @@ package org.cypher.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.cypher.util.Subsystem;
+import org.cypher.Subsystem;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;

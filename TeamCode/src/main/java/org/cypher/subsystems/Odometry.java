@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.cypher.util.Subsystem;
-import org.cypher.Vector;
+import org.cypher.Subsystem;
+import org.cypher.util.Vector;
 
 public class Odometry implements Subsystem {
     private DcMotorEx leftEncoder;
@@ -33,7 +33,6 @@ public class Odometry implements Subsystem {
 //    public final static double ENCODER_COUNTS_PER_INCH = 8192.0 / (2.0 * Math.PI * 1.0);
     public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0);
 
-
     private final static double LR_RADIUS = 17.37831805019305;
     private final static double B_RADIUS = LR_RADIUS;
 
@@ -59,13 +58,12 @@ public class Odometry implements Subsystem {
         backEncoder = opMode.hardwareMap.get(DcMotorEx.class, "intake");
 
         resetEncoders();
-
     }
 
     public void setStartPos(double xPos, double yPos, double angle) {
         this.xPos = xPos;
         this.yPos = yPos;
-        startAngle = Math.toRadians(angle);
+        this.startAngle = Math.toRadians(angle);
     }
 
     public void setAngleCorrection(double angleCorrection) {
@@ -116,7 +114,6 @@ public class Odometry implements Subsystem {
     }
 
     public double[] convertFieldCentric(double xPos, double yPos) {
-
         double newX = xPos * Math.cos(angle - Math.PI / 2) - yPos * Math.sin(angle - Math.PI / 2);
         double newY = yPos * Math.cos(angle - Math.PI / 2) + xPos * Math.sin(angle - Math.PI / 2);
 
@@ -144,12 +141,10 @@ public class Odometry implements Subsystem {
             double turnRadius = LR_RADIUS * ENCODER_COUNTS_PER_INCH * (deltaLPos + deltaRPos) / (deltaRPos - deltaLPos);
             double strafeRadius = deltaBPos / deltaAngle - B_RADIUS * ENCODER_COUNTS_PER_INCH;
 
-
             deltax = turnRadius * (Math.cos(deltaAngle) - 1) + strafeRadius * Math.sin(deltaAngle);
             deltay = turnRadius * Math.sin(deltaAngle) + strafeRadius * (1 - Math.cos(deltaAngle));
         }
-
-
+        
         double[] fieldCentricValues = convertFieldCentric(encoderToInch(deltax), encoderToInch(deltay));
 
         xPos += fieldCentricValues[1];
@@ -177,9 +172,7 @@ public class Odometry implements Subsystem {
         return angle;
     }
 
-
     public Vector getPos() {
         return new Vector(xPos, yPos);
     }
-
 }

@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.util.Kryptos;
+import org.cypher.Kryptos;
 
-import org.cypher.Vector;
+import org.cypher.util.Vector;
 
 @TeleOp(name = "Basic TeleOp", group = "Tele-Op")
 public class BasicTeleOp extends LinearOpMode {

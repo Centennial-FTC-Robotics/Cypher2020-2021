@@ -1,4 +1,4 @@
-package org.cypher.util;
+package org.cypher;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,7 +11,7 @@ import org.cypher.subsystems.Odometry;
 import org.cypher.subsystems.OpenCVVision;
 import org.cypher.subsystems.Shooter;
 import org.cypher.subsystems.WobbleGoalGrabber;
-import org.cypher.Vector;
+import org.cypher.util.Vector;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -25,10 +25,10 @@ public class Kryptos {
     public static Shooter shooter = new Shooter();
     public static WobbleGoalGrabber wobbleGoalGrabber = new WobbleGoalGrabber();
     public static OpenCVVision openCV = new OpenCVVision();
+    
     private static List<LynxModule> hubs;
 
     private static File odoData = AppUtil.getInstance().getSettingsFile("odoData.txt");
-
 
     protected static OpMode opMode;
 
@@ -44,7 +44,6 @@ public class Kryptos {
         for (Subsystem subsystem : subsystems) {
             subsystem.initialize(opMode);
         }
-
         hubs = opMode.hardwareMap.getAll(LynxModule.class);
         setCacheMode(LynxModule.BulkCachingMode.AUTO);
     }
@@ -76,7 +75,7 @@ public class Kryptos {
             odometry.setStartPos(x, y, heading);
             if (heading > 180) {
                 float diff = heading - 180;
-                diff = -180 + diff;
+                diff -= 180;
                 imu.setInitAngle(diff);
             } else {
                 imu.setInitAngle(heading);

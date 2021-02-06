@@ -1,4 +1,4 @@
-package org.cypher;
+package org.cypher.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 

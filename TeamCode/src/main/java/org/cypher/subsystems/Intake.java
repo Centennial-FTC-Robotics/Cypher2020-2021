@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.cypher.util.Subsystem;
+import org.cypher.Subsystem;
 
 public class Intake implements Subsystem {
     private DcMotor intake;

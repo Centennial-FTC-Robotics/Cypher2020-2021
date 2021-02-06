@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.util.Kryptos;
-import org.cypher.Vector;
+import org.cypher.Kryptos;
+import org.cypher.util.Vector;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
@@ -13,18 +13,21 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class BlueSideAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Kryptos.initWithVision(this);
-
+        
+    	   Kryptos.initWithVision(this);
         Kryptos.imu.setInitAngle(0);
+        
         //TODO: think abt this and make it work when brain is working
+	    //is brain work?
         Kryptos.odometry.setStartPos(0, 16, 0);
         waitForStart();
 
         double ringCount = Kryptos.openCV.getRings();
+        
         //hello! :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu
-
         Telemetry.Item melody = telemetry.addData("hello! you got thisss u r stroncc u r smart u can do it :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu", null);
         melody.setRetained(true);
+        
         if (ringCount == 0) {
             while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0, 0), 0)) ;
             while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3, 0), 0))
