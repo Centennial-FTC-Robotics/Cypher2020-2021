@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.Kryptos;
-import org.cypher.util.Vector;
+import org.cypher.util.Kryptos;
+import org.cypher.Vector;
 
 
 @Autonomous(name = "Redside Auto", group = "Red Auto")

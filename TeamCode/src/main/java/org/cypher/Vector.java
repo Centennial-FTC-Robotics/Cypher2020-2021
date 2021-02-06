@@ -1,4 +1,4 @@
-package org.cypher.util;
+package org.cypher;
 
 
 import java.util.Arrays;

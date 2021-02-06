@@ -1,6 +1,6 @@
 package org.cypher.purepursuit;
 
-import org.cypher.util.Vector;
+import org.cypher.Vector;
 
 import java.util.Set;
 

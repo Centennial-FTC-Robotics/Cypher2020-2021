@@ -1,4 +1,4 @@
-package org.cypher;
+package org.cypher.util;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,7 +11,7 @@ import org.cypher.subsystems.Odometry;
 import org.cypher.subsystems.OpenCVVision;
 import org.cypher.subsystems.Shooter;
 import org.cypher.subsystems.WobbleGoalGrabber;
-import org.cypher.util.Vector;
+import org.cypher.Vector;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;

@@ -3,8 +3,7 @@ package org.cypher.purepursuit;
 import com.qualcomm.robotcore.util.Range;
 
 import org.cypher.purepursuit.IntersectionPoint;
-import org.cypher.purepursuit.PathComponent;
-import org.cypher.util.Vector;
+import org.cypher.Vector;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

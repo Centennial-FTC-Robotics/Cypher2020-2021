@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="13" />
+    <bytecodeTargetLevel target="13">
+      <module name="Cypher2020-2021.cypher2020-2021" target="11" />
+      <module name="Cypher2020-2021.FtcRobotController" target="11" />
+      <module name="IdeaProjects.Cypher2020-2021.TeamCode" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

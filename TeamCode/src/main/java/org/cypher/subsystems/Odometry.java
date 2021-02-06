@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.cypher.Subsystem;
-import org.cypher.util.Vector;
+import org.cypher.util.Subsystem;
+import org.cypher.Vector;
 
 public class Odometry implements Subsystem {
     private DcMotorEx leftEncoder;
@@ -54,7 +54,7 @@ public class Odometry implements Subsystem {
     public void initialize(OpMode opMode) {
         this.opMode = (LinearOpMode) opMode;
 
-        leftEncoder = opMode.hardwareMap.get(DcMotorEx.class, "backRight");
+        leftEncoder = opMode.hardwareMap.get(DcMotorEx.class, "frontLeft");
         rightEncoder = opMode.hardwareMap.get(DcMotorEx.class, "frontRight");
         backEncoder = opMode.hardwareMap.get(DcMotorEx.class, "intake");
 

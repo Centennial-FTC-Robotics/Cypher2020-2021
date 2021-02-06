@@ -7,16 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.cypher.Subsystem;
+import org.cypher.util.Subsystem;
 
 public class Shooter implements Subsystem {
     private DcMotor shooter;
     private Servo storage;
     private Servo aligner;
-    public static final double NOT_SHOOTING = .6;
-    public static final double SHOOT_ONE = .45;
-    public static final double SHOOT_TWO = .38;
-    public static final double SHOOT_THREE = .54;
+
+    public static final double NOT_SHOOTING = .58; //old .6
+    public static final double SHOOT_ONE = .46; //old .45
+    public static final double SHOOT_TWO = .38; //old .38
+    public static final double SHOOT_THREE = .3; //old .54
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
     private static final double PUSH_POSITION = .7;
@@ -45,7 +46,7 @@ public class Shooter implements Subsystem {
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         storage = opMode.hardwareMap.servo.get("shooterServo");
-        storage.setDirection(Servo.Direction.REVERSE);
+        storage.setDirection(Servo.Direction.FORWARD);
         aligner = opMode.hardwareMap.servo.get("aligner");
 
         storage.setPosition(NOT_SHOOTING);

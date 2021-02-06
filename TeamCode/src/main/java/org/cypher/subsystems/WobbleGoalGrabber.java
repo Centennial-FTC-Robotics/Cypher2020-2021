@@ -3,7 +3,7 @@ package org.cypher.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.cypher.Subsystem;
+import org.cypher.util.Subsystem;
 
 public class WobbleGoalGrabber implements Subsystem {
     private static final double OPEN_POSITION = .43;
