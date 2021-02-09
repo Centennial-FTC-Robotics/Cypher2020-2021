@@ -14,10 +14,10 @@ public class Shooter implements Subsystem {
     private Servo storage;
     private Servo aligner;
 
-    public static final double NOT_SHOOTING = .36; //old .58
-    public static final double SHOOT_ONE = .48; //old .45
-    public static final double SHOOT_TWO = .56; //old .38
-    public static final double SHOOT_THREE = .7; //old .54
+    public static final double NOT_SHOOTING = .7; //old .58
+    public static final double SHOOT_ONE = .52; //old .45
+    public static final double SHOOT_TWO = .44; //old .38
+    public static final double SHOOT_THREE = .32; //old .54
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
     //uhh wtf do i do for these i didnt change them
