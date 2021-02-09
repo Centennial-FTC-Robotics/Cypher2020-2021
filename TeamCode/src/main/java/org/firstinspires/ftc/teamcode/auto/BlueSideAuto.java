@@ -27,7 +27,9 @@ public class BlueSideAuto extends LinearOpMode {
         //hello! :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu
         Telemetry.Item melody = telemetry.addData("hello! you got thisss u r stroncc u r smart u can do it :))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) -Melody Chu", null);
         melody.setRetained(true);
-        
+        telemetry.update();
+
+
         if (ringCount == 0) {
             while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(0, 0), 0)) ;
             while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3, 0), 0))
