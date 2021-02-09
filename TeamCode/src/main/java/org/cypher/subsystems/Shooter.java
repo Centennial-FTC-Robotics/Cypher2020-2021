@@ -21,6 +21,7 @@ public class Shooter implements Subsystem {
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
     //uhh wtf do i do for these i didnt change them
+    //dont
     private static final double PUSH_POSITION = .7;
     private static final double REST_POSITION = .5;
     
@@ -70,7 +71,7 @@ public class Shooter implements Subsystem {
     }
 
     private void actuallyShoot() {
-        setPower(.9);
+        setPower(.55);
         ElapsedTime time = new ElapsedTime();
         while (opMode.opModeIsActive() && time.seconds() < 1) ;
         for (double pos : POSITIONS) {
