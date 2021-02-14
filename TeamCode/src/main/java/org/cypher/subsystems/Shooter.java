@@ -14,17 +14,17 @@ public class Shooter implements Subsystem {
     private Servo storage;
     private Servo aligner;
 
-    public static final double NOT_SHOOTING = .7; //old .58
-    public static final double SHOOT_ONE = .52; //old .45
-    public static final double SHOOT_TWO = .44; //old .38
-    public static final double SHOOT_THREE = .32; //old .54
+    public static final double NOT_SHOOTING = .69420; //old .58
+    public static final double SHOOT_ONE = 59420; //old .45
+    public static final double SHOOT_TWO = .5142 ; //old .38
+    public static final double SHOOT_THREE = .43420; //old .54
     public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
 
     //uhh wtf do i do for these i didnt change them
     //dont
     private static final double PUSH_POSITION = .7;
     private static final double REST_POSITION = .5;
-    
+
     private boolean isShooting = false;
 
     private LinearOpMode opMode;
@@ -50,19 +50,68 @@ public class Shooter implements Subsystem {
         storage.setDirection(Servo.Direction.REVERSE);
         aligner = opMode.hardwareMap.servo.get("aligner");
 
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         storage.setPosition(NOT_SHOOTING);
         aligner.setPosition(REST_POSITION);
+
+        isShooting = false;
     }
 
     public void setPower(double power) {
         shooter.setPower(power);
     }
 
+    public double getStoragePos() {
+        return storage.getPosition();
+    }
+
+    public void shootOne(boolean useThread) {
+        if(useThread) {
+            OneRingShootThread thread = new OneRingShootThread();
+            thread.start();
+         } else {
+            shootOne();
+        }
+    }
+    public void shootOne() {
+        setPower(.35);
+        ElapsedTime time = new ElapsedTime();
+        while (opMode.opModeIsActive() && time.seconds() < .6 ) ;
+        double storagePos = storage.getPosition();
+
+
+
+        if (storagePos == NOT_SHOOTING)
+            storage.setPosition(SHOOT_ONE);
+        else if (storagePos == SHOOT_ONE)
+            storage.setPosition(SHOOT_TWO);
+        else if(storagePos == SHOOT_TWO)
+            storage.setPosition(SHOOT_THREE);
+        else {
+            storage.setPosition(NOT_SHOOTING);
+            return;
+        }
+
+        time.reset();
+        while (opMode.opModeIsActive() && time.seconds() < .5) ;
+        aligner.setPosition(PUSH_POSITION);
+        time.reset();
+        while (opMode.opModeIsActive() && time.seconds() < .3) ;
+        aligner.setPosition(REST_POSITION);
+        time.reset();
+        while (opMode.opModeIsActive() && time.seconds() < .3) ;
+
+        setPower(0);
+
+        if(storage.getPosition() == SHOOT_THREE)
+            storage.setPosition(NOT_SHOOTING);
+    }
+
     public void shoot(boolean useThread) {
         if (!isShooting) {
             isShooting = true;
             if (useThread) {
-                ShootingThread thread = new ShootingThread();
+                ThreeRingShootThread thread = new ThreeRingShootThread();
                 thread.start();
             } else {
                 actuallyShoot();
@@ -71,7 +120,7 @@ public class Shooter implements Subsystem {
     }
 
     private void actuallyShoot() {
-        setPower(.55);
+        setPower(.45);
         ElapsedTime time = new ElapsedTime();
         while (opMode.opModeIsActive() && time.seconds() < 1) ;
         for (double pos : POSITIONS) {
@@ -95,10 +144,17 @@ public class Shooter implements Subsystem {
         storage.setPosition(pos);
     }
 
-    private class ShootingThread extends Thread {
+    private class ThreeRingShootThread extends Thread {
         @Override
         public void run() {
             actuallyShoot();
+        }
+    }
+
+    private class OneRingShootThread extends Thread {
+        @Override
+        public void run() {
+            shootOne();
         }
     }
 }

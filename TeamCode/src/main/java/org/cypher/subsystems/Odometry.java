@@ -13,9 +13,10 @@ public class Odometry implements Subsystem {
     private DcMotorEx rightEncoder;
     private DcMotorEx backEncoder;
 
-    private static final int L_DIR = 1;
-    private static final int R_DIR = 1;
-    private static final int B_DIR = -1;
+    private static int L_DIR = 1;
+    private static int R_DIR = 1;
+    //-1 for red, 1 for blue pls change ty
+    private static int B_DIR = -1;
 
     private int lPos;
     private int rPos;
@@ -28,14 +29,25 @@ public class Odometry implements Subsystem {
     private int deltaLPos;
     private int deltaRPos;
     private int deltaBPos;
-    
-//    for the new encoders
-//    public final static double ENCODER_COUNTS_PER_INCH = 8192.0 / (2.0 * Math.PI * 1.0);
-    public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0);
 
-    private final static double LR_RADIUS = 17.37831805019305;
-    private final static double B_RADIUS = LR_RADIUS;
+    //    for the new encoders
+    public final static double ENCODER_COUNTS_PER_INCH = 8192.0 / (2.0 * Math.PI * 1.0);
+//    public final static double ENCODER_COUNTS_PER_INCH = 4096.0 / (2.0 * Math.PI * 1.0); old encoders
 
+//    private final static double LR_RADIUS = 17.37831805019305;
+
+//    private final static double LR_RADIUS = 143.5;
+//    private final static double B_RADIUS = 165.25;
+
+    private final static double LR_RADIUS = 143.35;
+    private final static double B_RADIUS = 165.1;
+
+    /**
+     * the math in {@link org.firstinspires.ftc.teamcode.test.BackOdoCal} says this should be like 300 but here we are
+     */
+    private final static double B_CORRECTION = 550;
+    //12
+    //8910.00069420
     private double angle = 0;
     private double angleCorrection = 0;
     private double deltaAngle = 0;
@@ -46,6 +58,10 @@ public class Odometry implements Subsystem {
 
     public double xPos = 0;
     public double yPos = 0;
+
+    private Vector fieldCentric = new Vector(0, 0);
+
+    public double maxOffset = Integer.MAX_VALUE;
 
     private LinearOpMode opMode;
 
@@ -58,6 +74,15 @@ public class Odometry implements Subsystem {
         backEncoder = opMode.hardwareMap.get(DcMotorEx.class, "intake");
 
         resetEncoders();
+        maxOffset = Integer.MAX_VALUE;
+    }
+
+    public void setbDir(int dir) {
+        B_DIR = dir;
+    }
+
+    public int getBDir() {
+        return B_DIR;
     }
 
     public void setStartPos(double xPos, double yPos, double angle) {
@@ -120,12 +145,21 @@ public class Odometry implements Subsystem {
         return new double[]{newX, newY};
     }
 
+    public void setPosition(double xPos, double yPos, double angle) {
+        resetEncoders();
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.angle = angle;
+    }
+
     public void updatePos() {
+//        testUpdatePos();
         updateEncoders();
 
         deltaLPos = getLPos() - oldLPos;
         deltaRPos = getRPos() - oldRPos;
         deltaBPos = getBPos() - oldBPos;
+
 
         oldLPos = getLPos();
         oldRPos = getRPos();
@@ -144,11 +178,55 @@ public class Odometry implements Subsystem {
             deltax = turnRadius * (Math.cos(deltaAngle) - 1) + strafeRadius * Math.sin(deltaAngle);
             deltay = turnRadius * Math.sin(deltaAngle) + strafeRadius * (1 - Math.cos(deltaAngle));
         }
-        
-        double[] fieldCentricValues = convertFieldCentric(encoderToInch(deltax), encoderToInch(deltay));
 
-        xPos += fieldCentricValues[1];
-        yPos += fieldCentricValues[0];
+        fieldCentric = new Vector(encoderToInch(deltay), encoderToInch(deltax));
+        fieldCentric.rotate(- (B_DIR) * angle) ;
+
+        xPos += fieldCentric.getY();
+        yPos += fieldCentric.getX();
+
+        if(xPos < 0)
+            xPos = 0;
+        if(yPos < 0)
+            yPos = 0;
+
+//        double[] fieldCentricValues = convertFieldCentric(encoderToInch(deltax), encoderToInch(deltay));
+//
+//        xPos += fieldCentricValues[1];
+//        yPos += fieldCentricValues[0];
+    }
+
+    public void testUpdatePos() {
+        updateEncoders();
+
+        deltaLPos = getLPos() - oldLPos;
+        deltaRPos = getRPos() - oldRPos;
+        deltaBPos = getBPos() - oldBPos;
+
+        double phi = (deltaLPos - deltaRPos) / 290d; //do this
+
+        deltaAngle = (deltaRPos - deltaLPos) / (2.0 * LR_RADIUS * ENCODER_COUNTS_PER_INCH); //it's in radians
+        angle = normalizeRadians((getRPos() - getLPos()) / (2.0 * LR_RADIUS * ENCODER_COUNTS_PER_INCH) + startAngle + angleCorrection);
+
+        oldLPos = getLPos();
+        oldRPos = getRPos();
+        oldBPos = getBPos();
+
+        double deltaMidPos = (deltaLPos + deltaRPos) / 2d;
+        double deltaPerpPos = deltaBPos - Math.toRadians(B_CORRECTION) *  phi;
+
+        double x = deltaMidPos * Math.cos(deltaAngle) - deltaPerpPos * Math.sin(deltaAngle);
+        double y = deltaPerpPos * Math.sin(deltaAngle) + deltaPerpPos * Math.cos(deltaAngle);
+
+        fieldCentric = new Vector(y, x);
+        fieldCentric.rotate(angle);
+
+        xPos += encoderToInch(fieldCentric.getX());
+        yPos +=     encoderToInch(fieldCentric.getY());
+
+//        xPos += encoderToInch(y);
+//        yPos += encoderToInch(x);
+
     }
 
 

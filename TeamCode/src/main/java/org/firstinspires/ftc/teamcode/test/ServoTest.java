@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.cypher.Kryptos;
 import org.cypher.subsystems.Shooter;
+import org.cypher.subsystems.WobbleGoal;
 
 @TeleOp(name = "Servo Positioning Tester", group = "Test")
 public class ServoTest extends LinearOpMode {
@@ -16,18 +17,19 @@ public class ServoTest extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
         double pos = Shooter.NOT_SHOOTING;
         while (opModeIsActive()) {
+            Kryptos.shooter.moveServo(pos );
+            telemetry.addData("current pos", pos);
+            telemetry.update();
             if (time.milliseconds() > 200) {
-                if (gamepad1.dpad_up && pos < 1) {
+                if (gamepad1.dpad_up) {
                     pos += .02;
                     time.reset();
-                } else if (gamepad1.dpad_down && pos > 0) {
+                } else if (gamepad1.dpad_down) {
                     pos -= .02;
                     time.reset();
                 }
             }
-            Kryptos.shooter.moveServo(pos);
-            telemetry.addData("current pos", pos);
-            telemetry.update();
+
         }
     }
 }

@@ -5,14 +5,20 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.cypher.Kryptos;
+import org.cypher.util.Vector;
 
-@Disabled
+
 @Autonomous(name = "Turning Test", group = "Test")
 public class Turn extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Kryptos.init(this);
+        Kryptos.initWithVision(this);
+        Kryptos.odometry.setbDir(-1);
+        Kryptos.odometry.setStartPos(13, 0, 270);
+        Kryptos.imu.setInitAngle(-90);
+
         waitForStart();
-        Kryptos.driveTrain.turnRelative(90);
+//        Kryptos.driveTrain.loopMoveToPos(new Vector(13, 10), 270);
+        Kryptos.driveTrain.turnAbsolute(0);
     }
 }

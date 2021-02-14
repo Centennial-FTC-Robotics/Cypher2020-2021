@@ -157,7 +157,11 @@ public class Vector {
 
     public static Vector sub(Vector term_one, Vector term_two) {
 
-        return Vector.add(term_one, invert(term_two));
+//        return Vector.add(term_one, invert(term_two));
+        double x = term_one.getX() - term_two.getX();
+        double y = term_one.getY() - term_two.getY();
+
+        return new Vector(x,y);
     }
 
     public static Vector invert(Vector term_two) {

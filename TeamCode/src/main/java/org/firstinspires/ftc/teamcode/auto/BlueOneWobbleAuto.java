@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -8,6 +9,7 @@ import org.cypher.Kryptos;
 import org.cypher.util.Vector;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Disabled
 @Autonomous(name = "Blue Side 1 Wobble Goal", group = "Blue Auto")
 public class BlueOneWobbleAuto extends LinearOpMode {
     @Override
@@ -47,8 +49,8 @@ public class BlueOneWobbleAuto extends LinearOpMode {
 //        //move wobble goal
 //        while(while(opModeIsActive() && Kryptos.driveTrain.moveToPosition(targetZone,0));
 //
-        Kryptos.wobbleGoalGrabber.flipHinge();
-        Kryptos.wobbleGoalGrabber.release();
+        Kryptos.wobbleGoal.flipHinge();
+        Kryptos.wobbleGoal.release();
 
         ElapsedTime time = new ElapsedTime();
         while (opModeIsActive() && time.seconds() < 1.5) ;
@@ -97,6 +99,6 @@ public class BlueOneWobbleAuto extends LinearOpMode {
 
         while (opModeIsActive() && Kryptos.driveTrain.moveToPosition(new Vector(22.75 * 3.5, 22.75), 90))
             ;
-
+        Kryptos.saveOdoData();
     }
 }

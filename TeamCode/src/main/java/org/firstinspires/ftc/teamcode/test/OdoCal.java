@@ -35,7 +35,7 @@ public class OdoCal extends LinearOpMode {
     final double PIVOT_SPEED = 0.5;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 4096.0 / (2.0 * 1.0 * Math.PI);
+    final double COUNTS_PER_INCH = 8192.0 / (2.0 * 1.0 * Math.PI);
 
     ElapsedTime timer = new ElapsedTime();
 
