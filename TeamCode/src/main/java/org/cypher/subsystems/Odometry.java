@@ -39,8 +39,8 @@ public class Odometry implements Subsystem {
 //    private final static double LR_RADIUS = 143.5;
 //    private final static double B_RADIUS = 165.25;
 
-    private final static double LR_RADIUS = 143.35;
-    private final static double B_RADIUS = 165.1;
+    private final static double LR_RADIUS = 5.62;
+    private final static double B_RADIUS = 6.49;
 
     /**
      * the math in {@link org.firstinspires.ftc.teamcode.test.BackOdoCal} says this should be like 300 but here we are
@@ -173,7 +173,7 @@ public class Odometry implements Subsystem {
             deltay = (deltaLPos + deltaRPos) / 2d;
         } else {
             double turnRadius = LR_RADIUS * ENCODER_COUNTS_PER_INCH * (deltaLPos + deltaRPos) / (deltaRPos - deltaLPos);
-            double strafeRadius = deltaBPos / deltaAngle - B_RADIUS * ENCODER_COUNTS_PER_INCH;
+            double strafeRadius = deltaBPos / deltaAngle + B_RADIUS * ENCODER_COUNTS_PER_INCH;
 
             deltax = turnRadius * (Math.cos(deltaAngle) - 1) + strafeRadius * Math.sin(deltaAngle);
             deltay = turnRadius * Math.sin(deltaAngle) + strafeRadius * (1 - Math.cos(deltaAngle));
