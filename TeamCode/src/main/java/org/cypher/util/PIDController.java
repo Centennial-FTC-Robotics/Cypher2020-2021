@@ -9,6 +9,8 @@ public class PIDController {
     private boolean running = false;
     private ElapsedTime time;
 
+    private double maxI = 1.3;
+
     private static boolean useI = false;
 
     public PIDController(float kP, float kI, float kD) {
@@ -56,6 +58,8 @@ public class PIDController {
                 i += toAdd;
             else if (i > -1.3 && i < 1.3)
                 i += toAdd;
+        } else {
+            i = 0;
         }
         float d = (float) ((error - oldError) / time.seconds());
 
@@ -67,6 +71,10 @@ public class PIDController {
 
     public float getI() {
         return i;
+    }
+
+    public void setMaxI(double maxI) {
+        this.maxI = maxI;
     }
 
     public static void setUseI(boolean useI) {

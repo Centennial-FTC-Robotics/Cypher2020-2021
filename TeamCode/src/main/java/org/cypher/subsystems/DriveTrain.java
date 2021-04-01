@@ -32,7 +32,7 @@ public class DriveTrain implements Subsystem {
 
     private final PIDController xController = new PIDController(.12f, .01f, 0f);
     private final PIDController yController = new PIDController(.12f, .007f, 0.01f);
-    private final PIDController angleController = new PIDController(.07f, 0.006f, 0.12f);
+    private final PIDController angleController = new PIDController(.06f, 0.008f, 0.12f);
 
     private final PIDController turnController = new PIDController(1/150f,0.006f,0.001f);
 
@@ -64,6 +64,8 @@ public class DriveTrain implements Subsystem {
 
         motors = new DcMotor[]{frontLeft, frontRight, backLeft, backRight};
         odoLoopCount = 0;
+
+        angleController.setMaxI(1.7);
     }
 
     public void updatePos() {
