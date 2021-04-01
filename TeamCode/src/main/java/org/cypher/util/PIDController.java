@@ -52,11 +52,11 @@ public class PIDController {
         double toAdd = error * time.seconds();
 
         if (useI) {
-            if (i > 1.3 && toAdd < 0)
+            if (i > maxI && toAdd < 0)
                 i += toAdd;
-            else if (i < -1.3 && toAdd > 0)
+            else if (i < -maxI && toAdd > 0)
                 i += toAdd;
-            else if (i > -1.3 && i < 1.3)
+            else if (i > -maxI&& i < maxI)
                 i += toAdd;
         } else {
             i = 0;
