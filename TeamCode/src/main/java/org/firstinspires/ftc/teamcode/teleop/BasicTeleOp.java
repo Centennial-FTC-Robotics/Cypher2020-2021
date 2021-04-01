@@ -97,10 +97,11 @@ public class BasicTeleOp extends LinearOpMode {
                     Kryptos.wobbleGoal.flipHinge();
                     time.reset();
                 }
+
                 // Move to shooting position and shoot all 3
                 if (gamepad1.right_trigger > 0 && !gamepad1.start) {
                     // Robot starts shaking back and forth when near target
-                    while (Kryptos.driveTrain.moveToPosition(new Vector(0,0), 0, .3, .05, .3, 1, 5));
+                    while (Kryptos.driveTrain.moveToPosition(new Vector(0,0), 0));
                     Kryptos.shooter.shoot(true);
                 }
             }

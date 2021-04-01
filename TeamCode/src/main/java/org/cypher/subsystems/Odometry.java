@@ -185,11 +185,6 @@ public class Odometry implements Subsystem {
         xPos += fieldCentric.getY();
         yPos += fieldCentric.getX();
 
-        if(xPos < 0)
-            xPos = 0;
-        if(yPos < 0)
-            yPos = 0;
-
 //        double[] fieldCentricValues = convertFieldCentric(encoderToInch(deltax), encoderToInch(deltay));
 //
 //        xPos += fieldCentricValues[1];

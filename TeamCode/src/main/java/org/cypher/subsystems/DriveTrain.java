@@ -291,6 +291,11 @@ public class DriveTrain implements Subsystem {
         opMode.telemetry.addData("target", targetPos);
         opMode.telemetry.addData("current", currentPos);
 
+        double ydiff = Math.abs(targetPos.getY() - currentPos.getY());
+        double xdiff = Math.abs(targetPos.getX() - currentPos.getX());
+
+        PIDController.setUseI(Math.hypot(ydiff, xdiff) <= 5);
+
         getMotorPowers(targetPos, heading);
 
         double diag1 = power.getComponent(0);

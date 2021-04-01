@@ -9,6 +9,8 @@ public class PIDController {
     private boolean running = false;
     private ElapsedTime time;
 
+    private static boolean useI = false;
+
     public PIDController(float kP, float kI, float kD) {
         this.kP = kP;
         this.kI = kI;
@@ -46,12 +48,15 @@ public class PIDController {
 
         float p = error;
         double toAdd = error * time.seconds();
-        if (i > 1.3 && toAdd < 0)
-            i += toAdd;
-        else if (i < -1.3 && toAdd > 0)
-            i += toAdd;
-        else if (i > -1.3 && i < 1.3)
-            i += toAdd;
+
+        if (useI) {
+            if (i > 1.3 && toAdd < 0)
+                i += toAdd;
+            else if (i < -1.3 && toAdd > 0)
+                i += toAdd;
+            else if (i > -1.3 && i < 1.3)
+                i += toAdd;
+        }
         float d = (float) ((error - oldError) / time.seconds());
 
         oldError = error;
@@ -64,5 +69,7 @@ public class PIDController {
         return i;
     }
 
-
+    public static void setUseI(boolean useI) {
+        PIDController.useI = useI;
+    }
 }
