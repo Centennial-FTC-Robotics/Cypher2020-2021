@@ -159,7 +159,6 @@ public class Odometry implements Subsystem {
         deltaRPos = getRPos() - oldRPos;
         deltaBPos = getBPos() - oldBPos;
 
-
         oldLPos = getLPos();
         oldRPos = getRPos();
         oldBPos = getBPos();
