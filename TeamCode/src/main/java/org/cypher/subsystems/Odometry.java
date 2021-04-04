@@ -153,7 +153,6 @@ public class Odometry implements Subsystem {
     }
 
     public void updatePos() {
-//        testUpdatePos();
         updateEncoders();
 
         deltaLPos = getLPos() - oldLPos;
@@ -184,46 +183,7 @@ public class Odometry implements Subsystem {
 
         xPos += fieldCentric.getY();
         yPos += fieldCentric.getX();
-
-//        double[] fieldCentricValues = convertFieldCentric(encoderToInch(deltax), encoderToInch(deltay));
-//
-//        xPos += fieldCentricValues[1];
-//        yPos += fieldCentricValues[0];
     }
-
-    public void testUpdatePos() {
-        updateEncoders();
-
-        deltaLPos = getLPos() - oldLPos;
-        deltaRPos = getRPos() - oldRPos;
-        deltaBPos = getBPos() - oldBPos;
-
-        double phi = (deltaLPos - deltaRPos) / 290d; //do this
-
-        deltaAngle = (deltaRPos - deltaLPos) / (2.0 * LR_RADIUS * ENCODER_COUNTS_PER_INCH); //it's in radians
-        angle = normalizeRadians((getRPos() - getLPos()) / (2.0 * LR_RADIUS * ENCODER_COUNTS_PER_INCH) + startAngle + angleCorrection);
-
-        oldLPos = getLPos();
-        oldRPos = getRPos();
-        oldBPos = getBPos();
-
-        double deltaMidPos = (deltaLPos + deltaRPos) / 2d;
-        double deltaPerpPos = deltaBPos - Math.toRadians(B_CORRECTION) *  phi;
-
-        double x = deltaMidPos * Math.cos(deltaAngle) - deltaPerpPos * Math.sin(deltaAngle);
-        double y = deltaPerpPos * Math.sin(deltaAngle) + deltaPerpPos * Math.cos(deltaAngle);
-
-        fieldCentric = new Vector(y, x);
-        fieldCentric.rotate(angle);
-
-        xPos += encoderToInch(fieldCentric.getX());
-        yPos +=     encoderToInch(fieldCentric.getY());
-
-//        xPos += encoderToInch(y);
-//        yPos += encoderToInch(x);
-
-    }
-
 
     public float encoderToInch(double encoder) {
         return (float) (encoder / ENCODER_COUNTS_PER_INCH);
