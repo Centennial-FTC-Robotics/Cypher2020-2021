@@ -3,6 +3,8 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="IdeaProjects.Cypher2020-2021.TeamCode" target="11" />
+      <module name="Kryptos.FtcRobotController" target="11" />
+      <module name="Kryptos.TeamCode" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

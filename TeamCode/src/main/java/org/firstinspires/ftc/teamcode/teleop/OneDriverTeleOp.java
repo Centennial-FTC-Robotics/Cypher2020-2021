@@ -49,7 +49,6 @@ public class OneDriverTeleOp extends LinearOpMode {
             telemetry.addData("x coord", pos.getX());
             telemetry.addData("y coord", pos.getY());
             telemetry.addData("current heading", Math.toDegrees(Kryptos.odometry.getHeading()));
-            telemetry.addData("storage pos", Kryptos.shooter.getStoragePos());
             telemetry.update();
 
             if (time.milliseconds() > 250) {

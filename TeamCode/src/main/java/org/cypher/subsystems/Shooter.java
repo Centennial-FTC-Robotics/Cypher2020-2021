@@ -1,160 +1,156 @@
 package org.cypher.subsystems;
 
+import android.sax.StartElementListener;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import com.qualcomm.robotcore.util.Range;
+import org.cypher.Kryptos;
 import org.cypher.Subsystem;
+import org.cypher.util.PIDController;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Shooter implements Subsystem {
     private DcMotor shooter;
-    private Servo storage;
+    private DcMotor storage;
     private Servo aligner;
 
-    public static final double NOT_SHOOTING = .69420; //old .58
-    public static final double SHOOT_ONE = 59420; //old .45
-    public static final double SHOOT_TWO = .5142 ; //old .38
-    public static final double SHOOT_THREE = .43420; //old .54
-    public static final double[] POSITIONS = {SHOOT_ONE, SHOOT_TWO, SHOOT_THREE};
+    public static final double PUSH_POS = 0;
+    public static final double REST_POS = 0;
 
-    //uhh wtf do i do for these i didnt change them
-    //dont
-    private static final double PUSH_POSITION = .7;
-    private static final double REST_POSITION = .5;
-
-    private boolean isShooting = false;
+    public static final int MIN_STORAGE = 50;
+    public static final int MAX_STORAGE = 1150; //1203
 
     private LinearOpMode opMode;
 
-    //start shooter motor at .4 speed
-    //wait like .5 of a second
-    //move servo up to SHOOT_ONE
-    //wait like .25 of a second
-    //move servo to SHOOT_TWO
-    //wait like .25 of a second
-    //move servo to SHOOT_THREE
-    //wait like .25 of a second
-    //move servo down to NOT_SHOOTING
-    //stop motor
+    private boolean isShooting;
 
+    private final PIDController storagePID = new PIDController(.08f,0,0);
     @Override
     public void initialize(OpMode opMode) {
+        isShooting = false;
         this.opMode = (LinearOpMode) opMode;
+
         shooter = opMode.hardwareMap.dcMotor.get("shooter");
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
-        storage = opMode.hardwareMap.servo.get("shooterServo");
-        storage.setDirection(Servo.Direction.REVERSE);
+        storage = opMode.hardwareMap.dcMotor.get("storage");
         aligner = opMode.hardwareMap.servo.get("aligner");
 
+        storage.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        storage.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        storage.setPosition(NOT_SHOOTING);
-        aligner.setPosition(REST_POSITION);
+        storage.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        isShooting = false;
+        storage.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 
-    public void setPower(double power) {
-        shooter.setPower(power);
-    }
-
-    public double getStoragePos() {
-        return storage.getPosition();
-    }
-
-    public void shootOne(boolean useThread) {
-        if(useThread) {
-            OneRingShootThread thread = new OneRingShootThread();
-            thread.start();
-         } else {
-            shootOne();
-        }
-    }
-    public void shootOne() {
-        setPower(.35);
-        ElapsedTime time = new ElapsedTime();
-        while (opMode.opModeIsActive() && time.seconds() < .6 ) ;
-        double storagePos = storage.getPosition();
-
-
-
-        if (storagePos == NOT_SHOOTING)
-            storage.setPosition(SHOOT_ONE);
-        else if (storagePos == SHOOT_ONE)
-            storage.setPosition(SHOOT_TWO);
-        else if(storagePos == SHOOT_TWO)
-            storage.setPosition(SHOOT_THREE);
-        else {
-            storage.setPosition(NOT_SHOOTING);
-            return;
-        }
-
-        time.reset();
-        while (opMode.opModeIsActive() && time.seconds() < .5) ;
-        aligner.setPosition(PUSH_POSITION);
-        time.reset();
-        while (opMode.opModeIsActive() && time.seconds() < .3) ;
-        aligner.setPosition(REST_POSITION);
-        time.reset();
-        while (opMode.opModeIsActive() && time.seconds() < .3) ;
-
-        setPower(0);
-
-        if(storage.getPosition() == SHOOT_THREE)
-            storage.setPosition(NOT_SHOOTING);
-    }
-
-    public void shoot(boolean useThread) {
-        if (!isShooting) {
-            isShooting = true;
-            if (useThread) {
-                ThreeRingShootThread thread = new ThreeRingShootThread();
-                thread.start();
-            } else {
-                actuallyShoot();
-            }
-        }
-    }
-
-    private void actuallyShoot() {
-        setPower(.45);
-        ElapsedTime time = new ElapsedTime();
-        while (opMode.opModeIsActive() && time.seconds() < 1) ;
-        for (double pos : POSITIONS) {
-            storage.setPosition(pos);
-            time.reset();
-            while (opMode.opModeIsActive() && time.seconds() < .3) ;
-            aligner.setPosition(PUSH_POSITION);
-            time.reset();
-            while (opMode.opModeIsActive() && time.seconds() < .3) ;
-            aligner.setPosition(REST_POSITION);
-            time.reset();
-            while (opMode.opModeIsActive() && time.seconds() < .3) ;
-        }
-
-        setPower(0);
-        storage.setPosition(NOT_SHOOTING);
-        isShooting = false;
+    public void resetEncoders() {
+        storage.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        storage.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void moveServo(double pos) {
-        storage.setPosition(pos);
+        aligner.setPosition(pos);
     }
 
-    private class ThreeRingShootThread extends Thread {
-        @Override
-        public void run() {
+    public void moveStorage(int pos) {
+        //TODO: im too lazy to implement PID for this, if this ends up causing problems then we can use a PID loop for it
+        if (!storage.isBusy()) {
+            pos = Range.clip(pos, MIN_STORAGE, MAX_STORAGE);
+            storage.setTargetPosition(pos);
+            storage.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            storage.setPower(.4);
+        }
+
+    }
+
+    private void actualMoveStorage(int pos) {
+       float error;
+        float power;
+        do {
+            error = storage.getCurrentPosition() - pos;
+            power = -storagePID.getPower(error);
+            power = (float) DriveTrain.clip(power, .1, .03);
+            storage.setPower(power);
+        } while (Math.abs(error) > 20 && opMode.opModeIsActive());
+        storagePID.reset();
+        storage.setPower(0);
+    }
+
+    public void shoot(boolean useThread) {
+        if(isShooting)
+            return;
+        if(useThread) {
+            ShootThread thread = new ShootThread();
+            thread.start();
+        } else {
             actuallyShoot();
         }
     }
 
-    private class OneRingShootThread extends Thread {
+    public void setStoragePower(double pow) {
+        storage.setPower(pow);
+    }
+
+    public int getStoragePos() {
+        return storage.getCurrentPosition();
+    }
+
+
+    //ensure storage is all the way up - if its not then wait like 2sec
+    //start shooter at .4 spd
+    //wait like 1sec
+    //move aligner
+    //wait .3 sec
+    //move aligner back
+    //wait .3 sec
+    //repeat that
+    //move storage down
+    //turn shooter off
+    //cry
+    private void actuallyShoot() {
+        isShooting = true;
+        ElapsedTime time = new ElapsedTime();
+        if(MAX_STORAGE - storage.getCurrentPosition() > 10) {
+            actualMoveStorage(MAX_STORAGE);
+            time.reset();
+            while (time.seconds() < .5);
+        }
+
+        shooter.setPower(.4);
+        time.reset();
+        while(time.seconds() < 1 && opMode.opModeIsActive());
+
+        for(int i = 0; i < 3; i++) {
+            aligner.setPosition(PUSH_POS);
+            time.reset();
+            while(time.seconds() < .3 && opMode.opModeIsActive());
+            aligner.setPosition(REST_POS);
+            time.reset();
+            while(time.seconds() < .3 && opMode.opModeIsActive());
+        }
+
+        shooter.setPower(0);
+        actualMoveStorage(MIN_STORAGE);
+        time.reset();
+        while (time.seconds() < .5);
+
+//        Telemetry.Item line = opMode.telemetry.addData("crying",null);
+//        line.setRetained(true);
+//        opMode.telemetry.update();
+    }
+
+    private class ShootThread extends Thread {
         @Override
         public void run() {
-            shootOne();
+            actuallyShoot();
         }
     }
 }

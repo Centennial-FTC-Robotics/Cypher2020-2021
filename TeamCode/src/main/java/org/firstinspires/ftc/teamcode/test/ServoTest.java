@@ -8,16 +8,14 @@ import org.cypher.Kryptos;
 import org.cypher.subsystems.Shooter;
 import org.cypher.subsystems.WobbleGoal;
 
-@TeleOp(name = "Servo Positioning Tester", group = "Test")
 public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Kryptos.init(this);
         waitForStart();
         ElapsedTime time = new ElapsedTime();
-        double pos = Shooter.NOT_SHOOTING;
+        double pos = 0; //set this to the base pos for whatever servo ur testing
         while (opModeIsActive()) {
-            Kryptos.shooter.moveServo(pos );
             telemetry.addData("current pos", pos);
             telemetry.update();
             if (time.milliseconds() > 200) {
@@ -29,7 +27,7 @@ public class ServoTest extends LinearOpMode {
                     time.reset();
                 }
             }
-
+            //make the servo ur testing move here
         }
     }
 }

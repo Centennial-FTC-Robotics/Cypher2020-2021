@@ -49,7 +49,6 @@ public class BasicTeleOp extends LinearOpMode {
             telemetry.addData("x coord", pos.getX());
             telemetry.addData("y coord", pos.getY());
             telemetry.addData("current heading", Math.toDegrees(Kryptos.odometry.getHeading()));
-            telemetry.addData("storage pos", Kryptos.shooter.getStoragePos());
             telemetry.update();
 
             if (time.milliseconds() > 250) {
@@ -74,12 +73,7 @@ public class BasicTeleOp extends LinearOpMode {
                 }
 
                 if (gamepad2.a && !gamepad2.start) {
-                    Kryptos.shooter.shoot(true);
-                    time.reset();
-                }
-
-                if(gamepad2.y) {
-                    Kryptos.shooter.shootOne(true);
+                    Kryptos.shooter.shoot(false);
                     time.reset();
                 }
 
@@ -115,6 +109,7 @@ public class BasicTeleOp extends LinearOpMode {
             leftY = -gamepad1.left_stick_y * .9;
             rightX = -gamepad1.right_stick_x * .7;
 
+            //comment this out to disable field centric
             Vector controlVector = new Vector(leftX, leftY);
             controlVector.rotate(-Kryptos.odometry.getHeading());
 
@@ -122,9 +117,7 @@ public class BasicTeleOp extends LinearOpMode {
 
             powers = Kryptos.driveTrain.findMotorPowers(controlVector.getX(), controlVector.getY(), rightX);
             Kryptos.driveTrain.setPowers(powers[0], powers[1], powers[2], powers[3], factor);
-
         }
-
         Kryptos.saveOdoData(0,0,0);
     }
 }
